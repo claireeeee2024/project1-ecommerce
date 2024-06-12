@@ -114,35 +114,40 @@ const Cart = ({ onClose }) => {
                           <p className="col-4">${item.price}</p>
                         </div>
                         <div className="row">
-                          <div className="col-8 d-flex justify-content-between align-items-center">
-                            <Button
-                              onClick={() =>
-                                debouncedHandleMinus(
-                                  userId,
-                                  { _id: item.id, price: item.price },
-                                  item.qty
-                                )
-                              }
-                            >
-                              -
-                            </Button>
-                            <FormControl
-                              type="text"
-                              value={item.qty}
-                              readOnly
-                            />
-                            <Button
-                              onClick={() =>
-                                debouncedHandleAdd(
-                                  userId,
-                                  { _id: item.id, price: item.price },
-                                  item.qty
-                                )
-                              }
-                            >
-                              +
-                            </Button>
-                          </div>
+                          {item.qty > 0 ? (
+                            <div className="col-8 d-flex justify-content-between align-items-center">
+                              <Button
+                                onClick={() =>
+                                  debouncedHandleMinus(
+                                    userId,
+                                    { _id: item.id, price: item.price },
+                                    item.qty
+                                  )
+                                }
+                              >
+                                -
+                              </Button>
+                              <FormControl
+                                type="text"
+                                value={item.qty}
+                                readOnly
+                              />
+                              <Button
+                                onClick={() =>
+                                  debouncedHandleAdd(
+                                    userId,
+                                    { _id: item.id, price: item.price },
+                                    item.qty
+                                  )
+                                }
+                              >
+                                +
+                              </Button>
+                            </div>
+                          ) : (
+                            <div>Out of stock</div>
+                          )}
+
                           <Button
                             className="nav-link active btn btn-link col-4 "
                             onClick={() => handleRemove(userId, item.id)}

@@ -96,6 +96,7 @@ const Product = ({ product }) => {
                 type="text"
                 value={data.item.qty}
                 onChange={(e) => handleChange(userInfo._id, product, e)}
+                readOnly
               />
               <Button
                 className="mr-2"

@@ -23,13 +23,6 @@ const Header = () => {
   const [searchInput, setSearchInput] = useState(
     useSelector((state) => state.product.searchKeyword) || ""
   );
-  const userId = useSelector((state) => state.auth.userInfo?._id) || null;
-  const { data, error, isLoading } = useGetCartsQuery(
-    {
-      id: userId,
-    },
-    { skip: !userId }
-  );
 
   const qtys = useSelector((state) => state.cart.qtys) || 0;
   const total = useSelector((state) => state.cart.total) || 0;
