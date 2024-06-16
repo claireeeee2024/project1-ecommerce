@@ -1,4 +1,40 @@
+import { setCartItems } from "../slices/cartSlice";
+import React from "react";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import Cart from "./Cart";
+
 const Header = () => {
+  const [cartVisible, setCartVisible] = useState(false);
+  const dispatch = useDispatch();
+  const handleClick = () => {
+    const cartData = {
+      items: [
+        {
+          id: 1,
+          name: "Meta Quest2 VR",
+          price: 299.0,
+          quantity: 1,
+          image: "url_to_image",
+        },
+        {
+          id: 2,
+          name: "iWatch",
+          price: 100.0,
+          quantity: 2,
+          image: "url_to_image",
+        },
+      ],
+      total: 499.0,
+      tax: 49.9,
+      discount: 20.0,
+    };
+    dispatch(setCartItems(cartData));
+    setCartVisible(true);
+  };
+  const handleClose = () => {
+    setCartVisible(false);
+  };
   return (
     <header>
       <div className="navbar navbar-expand-lg navbar-dark bg-dark ">
@@ -14,9 +50,10 @@ const Header = () => {
                 </a>
               </div>
               <div className="nav-item">
-                <a className="nav-link active" href="/">
+                <button onClick={handleClick}>
                   <i className="bi bi-cart3"></i> $0.0
-                </a>
+                </button>
+                {cartVisible && <Cart onClose={handleClose} />}
               </div>
             </div>
           </div>

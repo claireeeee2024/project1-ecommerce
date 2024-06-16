@@ -12,6 +12,9 @@ import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import UpdatePasswordScreen from "./screens/UpdatePasswordScreen";
 import SentResetEmailScreen from "./screens/SentResetEmailScreen";
+import { Provider } from "react-redux";
+import store from "./store";
+import CheckoutScreen from "./screens/CheckoutScreen";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -21,6 +24,8 @@ const router = createBrowserRouter(
       <Route path="/register" element={<RegisterScreen />} />
       <Route path="/update-password" element={<UpdatePasswordScreen />} />
       <Route path="/sent-reset-email" element={<SentResetEmailScreen />} />
+      <Route path="/checkout" element={<CheckoutScreen />} />
+
       <Route />
     </Route>
   )
@@ -29,6 +34,8 @@ const router = createBrowserRouter(
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
   </React.StrictMode>
 );
