@@ -8,9 +8,11 @@ import userRoutes from "./routes/userRoutes.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 
 dotenv.config();
+import cookieParser from "cookie-parser";
+import userRoutes from "./routes/userRoutes.js";
+import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 
-const port = process.env.PORT || 8000;
-
+const PORT = process.env.PORT || 8000;
 connectDB();
 
 const app = express();
