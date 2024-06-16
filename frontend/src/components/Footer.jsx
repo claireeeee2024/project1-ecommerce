@@ -3,11 +3,9 @@ const Footer = () => {
 
   return (
     <footer>
-      <div className="container mx-0 my-0">
-        <div className="row">
-          <div className="text-center py-3">
-            <p>&copy; {currentYear} All Rights Reserved.</p>
-          </div>
+      <div className="container justify-content-center mt-5">
+        <div className="text-center">
+          <p>&copy; {currentYear} All Rights Reserved.</p>
         </div>
       </div>
     </footer>

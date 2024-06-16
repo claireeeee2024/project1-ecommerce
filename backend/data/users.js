@@ -1,6 +1,6 @@
 const users = [
   {
-    email: "vender1@email.com",
+    email: "vendor1@email.com",
     password: "123456",
     isVendor: true,
   },
@@ -9,7 +9,7 @@ const users = [
     password: "123456",
   },
   {
-    email: "vender2@email.com",
+    email: "vendor2@email.com",
     password: "123456",
     isVendor: true,
   },
