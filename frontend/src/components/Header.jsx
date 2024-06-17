@@ -5,26 +5,43 @@ import { logout } from "../slices/authSlice";
 
 import { setCartItems } from "../slices/cartSlice";
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Cart from "./Cart";
 
 const Header = () => {
   const { userInfo } = useSelector((state) => state.auth);
+  const [cartVisible, setCartVisible] = useState(false);
+  const [logoutMessage, setLogoutMessage] = useState(null);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const [logoutApiCall] = useLogoutMutation();
+
+  useEffect(() => {
+    if (logoutMessage) {
+      const timer = setTimeout(() => {
+        setLogoutMessage(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [logoutMessage]);
 
   const logoutHandler = async () => {
     try {
       await logoutApiCall().unwrap();
       dispatch(logout());
+      setLogoutMessage({ type: "success", text: "Logged out successfully" });
       navigate("/login");
     } catch (err) {
       console.error(err);
+      setLogoutMessage({
+        type: "error",
+        text: "Logout failed. Please try again.",
+      });
     }
   };
 
-  const [cartVisible, setCartVisible] = useState(false);
   const handleClick = () => {
     //   const cartData = {
     //     items: [
@@ -106,6 +123,20 @@ const Header = () => {
           </div>
         </div>
       </nav>
+      {logoutMessage && (
+        <div
+          className={`alert alert-${logoutMessage.type} alert-dismissible fade show mt-3`}
+          role="alert"
+        >
+          {logoutMessage.text}
+          <button
+            type="button"
+            className="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+          ></button>
+        </div>
+      )}
     </header>
   );
 };

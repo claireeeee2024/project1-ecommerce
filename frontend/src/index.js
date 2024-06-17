@@ -27,7 +27,6 @@ const router = createBrowserRouter(
       <Route path="/update-password" element={<UpdatePasswordScreen />} />
       <Route path="/sent-reset-email" element={<SentResetEmailScreen />} />
       <Route path="/checkout" element={<CheckoutScreen />} />
-
       <Route />
     </Route>
   )
