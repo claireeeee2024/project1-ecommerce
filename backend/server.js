@@ -1,16 +1,15 @@
 import express from "express";
 import dotenv from "dotenv";
 import path from "path";
+import cors from "cors";
 import { connectDB } from "./config/db.js";
 import cartRouter from "./routes/cartRoute.js";
 import cookieParser from "cookie-parser";
 import userRoutes from "./routes/userRoutes.js";
+import productRouter from "./routes/productRoutes.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 
 dotenv.config();
-import cookieParser from "cookie-parser";
-import userRoutes from "./routes/userRoutes.js";
-import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 
 const PORT = process.env.PORT || 8000;
 connectDB();
@@ -20,13 +19,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.use("/api/users", userRoutes);
+// app.use(notFound);
+// app.use(errorHandler);
 
-app.use(notFound);
-app.use(errorHandler);
-
+app.use(cors());
 //add routers here
-app.use("/cart", cartRouter);
+app.use("/api/users", userRoutes);
+app.use("/carts", cartRouter);
+app.use("/products", productRouter);
 
 const dirname = path.resolve();
 if (process.env.NODE_ENV === "production") {
