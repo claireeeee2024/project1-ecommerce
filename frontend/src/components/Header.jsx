@@ -3,6 +3,12 @@ import { useLogoutMutation } from "../slices/usersApiSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../slices/authSlice";
 
+import { setCartItems } from "../slices/cartSlice";
+import React from "react";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import Cart from "./Cart";
+
 const Header = () => {
   const { userInfo } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
@@ -19,6 +25,36 @@ const Header = () => {
     }
   };
 
+  const [cartVisible, setCartVisible] = useState(false);
+  const dispatch = useDispatch();
+  const handleClick = () => {
+    //   const cartData = {
+    //     items: [
+    //       {
+    //         id: 1,
+    //         name: "Meta Quest2 VR",
+    //         price: 299.0,
+    //         quantity: 1,
+    //         image: "url_to_image",
+    //       },
+    //       {
+    //         id: 2,
+    //         name: "iWatch",
+    //         price: 100.0,
+    //         quantity: 2,
+    //         image: "url_to_image",
+    //       },
+    //     ],
+    //     total: 499.0,
+    //     tax: 49.9,
+    //     discount: 20.0,
+    //   };
+    //   dispatch(setCartItems(cartData));
+    setCartVisible(true);
+  };
+  const handleClose = () => {
+    setCartVisible(false);
+  };
   return (
     <header>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -58,11 +94,16 @@ const Header = () => {
                   </Link>
                 </li>
               )}
-              <li className="nav-item">
-                <Link className="nav-link active" to="/cart">
-                  <i className="bi bi-cart3"></i> $0.0
-                </Link>
-              </li>
+              <div className="nav-item">
+                <button onClick={handleClick}>
+                  <i className="bi bi-cart3"></i>{" "}
+                  <span class="position-absolute top-10 start-10 translate-middle badge border border-light rounded-circle bg-danger p-2">
+                    <span class="visually-hidden"></span>
+                  </span>{" "}
+                  $0.0
+                </button>
+                {cartVisible && <Cart onClose={handleClose} />}
+              </div>
             </ul>
           </div>
         </div>
