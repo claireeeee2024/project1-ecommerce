@@ -6,7 +6,6 @@ import {
   Route,
   RouterProvider,
 } from "react-router-dom";
-import { Provider } from "react-redux";
 import store from "./store";
 import App from "./App";
 import HomeScreen from "./screens/HomeScreen";
@@ -15,14 +14,13 @@ import RegisterScreen from "./screens/RegisterScreen";
 import UpdatePasswordScreen from "./screens/UpdatePasswordScreen";
 import SentResetEmailScreen from "./screens/SentResetEmailScreen";
 import { Provider } from "react-redux";
-import store from "./store";
 import CheckoutScreen from "./screens/CheckoutScreen";
 import TestScreen from "./screens/TestScreen";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
-      {/* <Route index={true} path="/" element={<HomeScreen />} /> */}
+      <Route index={true} path="/" element={<HomeScreen />} />
       <Route index={true} path="/" element={<TestScreen />} />
       <Route path="/login" element={<LoginScreen />} />
       <Route path="/register" element={<RegisterScreen />} />

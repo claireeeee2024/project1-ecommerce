@@ -6,7 +6,6 @@ import { logout } from "../slices/authSlice";
 import { setCartItems } from "../slices/cartSlice";
 import React from "react";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
 import Cart from "./Cart";
 
 const Header = () => {
@@ -26,7 +25,6 @@ const Header = () => {
   };
 
   const [cartVisible, setCartVisible] = useState(false);
-  const dispatch = useDispatch();
   const handleClick = () => {
     //   const cartData = {
     //     items: [
@@ -97,8 +95,8 @@ const Header = () => {
               <div className="nav-item">
                 <button onClick={handleClick}>
                   <i className="bi bi-cart3"></i>{" "}
-                  <span class="position-absolute top-10 start-10 translate-middle badge border border-light rounded-circle bg-danger p-2">
-                    <span class="visually-hidden"></span>
+                  <span className="position-absolute top-10 start-10 translate-middle badge border border-light rounded-circle bg-danger p-2">
+                    <span className="visually-hidden"></span>
                   </span>{" "}
                   $0.0
                 </button>
