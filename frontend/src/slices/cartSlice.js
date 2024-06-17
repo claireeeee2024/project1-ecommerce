@@ -14,7 +14,13 @@ const cartSlice = createSlice({
       state.tax = action.payload.tax;
       state.total = action.payload.total;
     },
+    addCartItems: (state, action) => {
+      console.log(action);
+      state.items.push(action.payload);
+      //   const { item } = action.payload;
+      //   console.log(item);
+    },
   },
 });
-export const { setCartItems } = cartSlice.actions;
+export const { setCartItems, addCartItems } = cartSlice.actions;
 export default cartSlice.reducer;
