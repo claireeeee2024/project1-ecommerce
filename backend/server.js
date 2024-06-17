@@ -16,16 +16,16 @@ app.use(express.urlencoded({ extended: true }))
 
 //add routers here
 
-const dirname = path.resolve()
-if(process.env.NODE_ENV === 'production'){
-    app.use(express.static(path.join(dirname, '/frontend/build')))
-    console.log(path.resolve(dirname, 'frontend', 'build', 'index.html'))
-    app.get('*', (req, res) => res.sendFile(path.resolve(dirname, 'frontend', 'build', 'index.html')))
-}else{
-  app.get("/", (req, res) => {
-    res.send("API is running...");
-  });
-}
+// const dirname = path.resolve()
+// if(process.env.NODE_ENV === 'production'){
+//     app.use(express.static(path.join(dirname, '/frontend/build')))
+//     console.log(path.resolve(dirname, 'frontend', 'build', 'index.html'))
+//     app.get('*', (req, res) => res.sendFile(path.resolve(dirname, 'frontend', 'build', 'index.html')))
+// }else{
+//   app.get("/", (req, res) => {
+//     res.send("API is running...");
+//   });
+// }
 
 app.use('/api/products', productRoutes);
 
