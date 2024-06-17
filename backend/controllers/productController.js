@@ -7,22 +7,17 @@ import asyncHandler from "express-async-handler";
  * @access Public
  */
 export const getProducts = asyncHandler(async (req, res) => {
-
-    const page = parseInt(req.query.page) || 1; // Pagination, current page number
-    const pageSize = parseInt(req.query.limit) || 10; //  number of products per page
-    const skip = (page - 1) * pageSize; // number of products to skip
-    const total = await Product.countDocuments(); // total number of products
-    const products = await Product.find()
-        .limit(pageSize)
-        .skip(skip); 
-
-    res.json({
-        products, 
-        currentPage: page,
-        pages: Math.ceil(total / pageSize),
-        total,
-    });
-
+  const page = parseInt(req.query.page) || 1; // Pagination, current page number
+  const pageSize = parseInt(req.query.limit) || 10; //  number of products per page
+  const skip = (page - 1) * pageSize; // number of products to skip
+  const total = await Product.countDocuments(); // total number of products
+  const products = await Product.find().limit(pageSize).skip(skip);
+  res.json({
+    products,
+    currentPage: page,
+    pages: Math.ceil(total / pageSize),
+    total,
+  });
 });
 
 /**
@@ -32,16 +27,13 @@ export const getProducts = asyncHandler(async (req, res) => {
  */
 
 export const getProductById = asyncHandler(async (req, res) => {
+  const product = await Product.findById(req.params.id);
 
-    const product = await Product.findById(req.params.id);
-
-    if (product) {
-        res.json(product);
-    } else {
-        return res.status(404).json({ message: "Product not found" });
-    }
-
-
+  if (product) {
+    res.json(product);
+  } else {
+    return res.status(404).json({ message: "Product not found" });
+  }
 });
 
 /**
@@ -51,30 +43,37 @@ export const getProductById = asyncHandler(async (req, res) => {
  */
 
 export const createProduct = asyncHandler(async (req, res) => {
+  const { name, description, category, price, inStock, images, vendor } =
+    req.body;
+  if (
+    !name ||
+    !description ||
+    !category ||
+    !price ||
+    !inStock ||
+    !images ||
+    !vendor
+  ) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
 
-    const { name, description, category, price, inStock, images, vendor} = req.body;
-    if (!name || !description || !category || !price || !inStock || !images || !vendor) {
-        return res.status(400).json({ message: "All fields are required" });
-    }
+  // Check if product already exists
+  // const existingProduct = await Product.findOne({ name, description, category, vendor });
+  // if (existingProduct) {
+  //     res.status(400).json({ message: "Product already exists" });
+  // }
 
-    // Check if product already exists
-    // const existingProduct = await Product.findOne({ name, description, category, vendor });
-    // if (existingProduct) {
-    //     res.status(400).json({ message: "Product already exists" });
-    // }
-
-    const product = new Product({
-        name,
-        description,
-        category,
-        price,
-        inStock,
-        images,
-        vendor,
-    });
-    const createdProduct = await product.save();
-    res.status(201).json(createdProduct);
-        
+  const product = new Product({
+    name,
+    description,
+    category,
+    price,
+    inStock,
+    images,
+    vendor,
+  });
+  const createdProduct = await product.save();
+  res.status(201).json(createdProduct);
 });
 
 /**
@@ -83,29 +82,26 @@ export const createProduct = asyncHandler(async (req, res) => {
  * @access Private
  */
 
-export const updateProduct = asyncHandler(async (req, res) =>{
+export const updateProduct = asyncHandler(async (req, res) => {
+  const { name, description, category, price, inStock, images, vendor } =
+    req.body;
+  const product = await Product.findById(req.params.id);
 
-    const { name, description, category, price, inStock, images, vendor} = req.body;
-    const product = await Product.findById(req.params.id);
+  //check product exists
+  if (!product) {
+    return res.status(404).json({ message: "Product not found" });
+  }
 
-    //check product exists
-    if (!product){
-        return res.status(404).json({message: "Product not found"});
-    }
+  product.name = name || product.name;
+  product.description = description || product.description;
+  product.category = category || product.category;
+  product.price = Number(price) || product.price;
+  product.inStock = Number(inStock) || product.inStock;
+  product.images = images || product.images;
+  product.vendor = vendor || product.vendor;
 
-    product.name = name || product.name;
-    product.description = description || product.description;
-    product.category = category || product.category;
-    product.price = Number(price) || product.price;
-    product.inStock = Number(inStock) || product.inStock;
-    product.images = images || product.images;
-    product.vendor = vendor || product.vendor;
-
-    const updatedProduct = await product.save();
-    res.json(updatedProduct);
-
-
-
+  const updatedProduct = await product.save();
+  res.json(updatedProduct);
 });
 
 /**
@@ -115,17 +111,16 @@ export const updateProduct = asyncHandler(async (req, res) =>{
  */
 
 export const deleteProduct = asyncHandler(async (req, res) => {
+  const product = await Product.findById(req.params.id);
+  if (!product) {
+    return res.status(404).json({ message: "Product not found" });
+  }
 
-    const product = await Product.findById(req.params.id);
-    if (!product){
-        return res.status(404).json({message: "Product not found"});
-    };
+  const deleted = await Product.deleteOne({ _id: req.params.id });
 
-    const deleted = await Product.deleteOne({_id : req.params.id});
-
-    if (deleted.deletedCount === 1) {
-        res.status(200).json({ message: 'Product deleted successfully' });
-    } else {
-        res.status(400).json({ message: 'Fail delete product' });
-    }
+  if (deleted.deletedCount === 1) {
+    res.status(200).json({ message: "Product deleted successfully" });
+  } else {
+    res.status(400).json({ message: "Fail delete product" });
+  }
 });
