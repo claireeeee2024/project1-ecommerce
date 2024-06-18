@@ -11,7 +11,23 @@ export const getProducts = asyncHandler(async (req, res) => {
   const pageSize = parseInt(req.query.limit) || 10; //  number of products per page
   const skip = (page - 1) * pageSize; // number of products to skip
   const total = await Product.countDocuments(); // total number of products
-  const products = await Product.find().limit(pageSize).skip(skip);
+
+  const sortOption = req.query.sort || 'createdAt';
+
+  let sortQuery = {createdAt: 1};
+  if (sortOption === 'priceLowToHigh') {
+    sortQuery = { price: 1 };
+  } else if (sortOption === 'priceHighToLow') {
+    sortQuery = { price: -1 };
+  } else if (sortOption === 'lastAdded') {
+    sortQuery = { createdAt: -1 };
+  }
+
+  const products = await Product.find()
+    .sort(sortQuery)
+    .skip(skip)
+    .limit(pageSize)
+
   res.json({
     products,
     currentPage: page,
@@ -92,6 +108,10 @@ export const updateProduct = asyncHandler(async (req, res) => {
     return res.status(404).json({ message: "Product not found" });
   }
 
+  if(product.vendor.toString() !== vendor.toString()) {
+    return res.status(401).json({ message: "You are not allowed to update this product" });
+  }
+
   product.name = name || product.name;
   product.description = description || product.description;
   product.category = category || product.category;
@@ -112,6 +132,7 @@ export const updateProduct = asyncHandler(async (req, res) => {
 
 export const deleteProduct = asyncHandler(async (req, res) => {
   const product = await Product.findById(req.params.id);
+  
   if (!product) {
     return res.status(404).json({ message: "Product not found" });
   }

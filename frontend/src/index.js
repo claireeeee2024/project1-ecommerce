@@ -17,6 +17,7 @@ import { Provider } from "react-redux";
 import CheckoutScreen from "./screens/CheckoutScreen";
 import TestScreen from "./screens/TestScreen";
 import ErrorScreen from "./screens/ErrorScreen";
+// import ProductScreen from "./screens/ProductScreen";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -28,6 +29,7 @@ const router = createBrowserRouter(
       <Route path="/update-password" element={<UpdatePasswordScreen />} />
       <Route path="/sent-reset-email" element={<SentResetEmailScreen />} />
       <Route path="/checkout" element={<CheckoutScreen />} />
+      {/* <Route path="/products" element={<ProductScreen />} /> */}
       <Route path="*" element={<ErrorScreen />} />
       <Route />
     </Route>
