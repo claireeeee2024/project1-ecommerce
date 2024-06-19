@@ -16,6 +16,10 @@ import { Provider } from "react-redux";
 import store from "./store";
 import CheckoutScreen from "./screens/CheckoutScreen";
 import TestScreen from "./screens/TestScreen";
+import { enableMapSet } from "immer";
+import ProductDetailScreen from "./screens/ProductDetailScreen";
+
+enableMapSet();
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -27,6 +31,7 @@ const router = createBrowserRouter(
       <Route path="/update-password" element={<UpdatePasswordScreen />} />
       <Route path="/sent-reset-email" element={<SentResetEmailScreen />} />
       <Route path="/checkout" element={<CheckoutScreen />} />
+      <Route path="/product/:id" element={<ProductDetailScreen />} />
 
       <Route />
     </Route>
