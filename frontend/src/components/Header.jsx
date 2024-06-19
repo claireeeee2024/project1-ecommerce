@@ -52,8 +52,8 @@ const Header = () => {
               <div className="nav-item">
                 <button onClick={handleClick}>
                   <i className="bi bi-cart3"></i>{" "}
-                  <span class="position-absolute top-10 start-10 translate-middle badge border border-light rounded-circle bg-danger p-2">
-                    <span class="visually-hidden"></span>
+                  <span className="position-absolute top-10 start-10 translate-middle badge border border-light rounded-circle bg-danger p-2">
+                    <span className="visually-hidden"></span>
                   </span>{" "}
                   $0.0
                 </button>

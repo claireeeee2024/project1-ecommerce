@@ -18,7 +18,7 @@ const Cart = ({ onClose }) => {
       <div className="row justify-content-between bg-primary m-0">
         <div className="col-6">
           <h2>
-            Cart (<small>{items.length}</small>)
+            Cart (<small>{items.size}</small>)
           </h2>
         </div>
         <div className="col-2 my-auto">
@@ -27,12 +27,12 @@ const Cart = ({ onClose }) => {
           </button>
         </div>
       </div>
-      {items.length === 0 ? (
+      {Array.from(items).length === 0 ? (
         <div>Cart is empty</div>
       ) : (
-        <div className="p-5">
+        <div className="p-5 cart-body">
           <div>
-            {items.map((item) => (
+            {Array.from(items.values()).map((item) => (
               <div key={item.id} className="row py-3">
                 <img src={item.image} alt="..." className="col-4" />
                 <div className="col-8">
