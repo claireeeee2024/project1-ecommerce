@@ -24,8 +24,7 @@ enableMapSet();
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
-      {/* <Route index={true} path="/" element={<HomeScreen />} /> */}
-      <Route index={true} path="/" element={<TestScreen />} />
+      <Route index={true} path="/" element={<HomeScreen />} />
       <Route path="/login" element={<LoginScreen />} />
       <Route path="/register" element={<RegisterScreen />} />
       <Route path="/update-password" element={<UpdatePasswordScreen />} />
@@ -41,8 +40,6 @@ const router = createBrowserRouter(
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <RouterProvider router={router} />
-    </Provider>
+    <RouterProvider router={router} />
   </React.StrictMode>
 );

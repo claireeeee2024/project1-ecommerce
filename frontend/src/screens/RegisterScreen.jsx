@@ -1,61 +1,53 @@
-import { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Form, Button, Row, Col } from "react-bootstrap";
-
-import FormContainer from "../components/FormContainer";
+import { useState } from "react";
+import AuthForm from "../components/AuthForm";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useRegisterMutation } from "../slices/usersApiSlice";
+import { setCredentials } from "../slices/authSlice";
+import { validateForm } from "../utils/validation";
+import Loader from "../components/Loader";
 
 const RegisterScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [vendor, setVendor] = useState(false);
+  const [isVendor, setIsVendor] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [register, { isLoading }] = useRegisterMutation();
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    console.log(email, password, vendor);
-    console.log("Registered");
+    const validationErrors = validateForm(email, password);
+    setErrors(validationErrors);
+    if (Object.values(validationErrors).some(Boolean)) {
+      return;
+    }
+    try {
+      const res = await register({ email, password, isVendor }).unwrap();
+      dispatch(setCredentials({ ...res }));
+      navigate("/");
+    } catch (error) {
+      setErrors({ apiError: error.data?.message || "Registration failed" });
+    }
   };
 
-  return (
-    <FormContainer>
-      <h1>Sign up an account</h1>
-      <Form.Check
-        type="switch"
-        id="custom-switch"
-        label="Register as a vendor"
-        value={vendor}
-        onChange={(e) => setVendor(!vendor)}
-      />
-      <Form onSubmit={submitHandler}>
-        <Form.Group className="my-2" controlId="email">
-          <Form.Label>Email</Form.Label>
-          <Form.Control
-            type="email"
-            placeholder="Enter email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          ></Form.Control>
-        </Form.Group>
-
-        <Form.Group className="my-2" controlId="password">
-          <Form.Label>Password</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="Enter password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          ></Form.Control>
-        </Form.Group>
-        <Button type="submit" variant="primary">
-          Register
-        </Button>
-      </Form>
-
-      <Row className="py-3">
-        <Col>
-          Already have an account <Link to={"/login"}>Sign in</Link>
-        </Col>
-      </Row>
-    </FormContainer>
+  return isLoading ? (
+    <Loader />
+  ) : (
+    <AuthForm
+      mode="register"
+      title="Sign up an account"
+      onSubmit={submitHandler}
+      email={email}
+      setEmail={setEmail}
+      password={password}
+      setPassword={setPassword}
+      isVendor={isVendor}
+      setIsVendor={setIsVendor}
+      errors={errors}
+    />
   );
 };
 

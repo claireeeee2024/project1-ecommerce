@@ -1,43 +1,43 @@
-import { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Form, Button, Row, Col } from "react-bootstrap";
-
-import FormContainer from "../components/FormContainer";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import AuthForm from "../components/AuthForm";
+import { validateForm } from "../utils/validation";
+import { useUpdatePasswordMutation } from "../slices/usersApiSlice";
+import Loader from "../components/Loader";
 
 const UpdatePasswordScreen = () => {
   const [email, setEmail] = useState("");
+  const [errors, setErrors] = useState({});
+
+  const [updatePassword, { isLoading }] = useUpdatePasswordMutation();
   const navigate = useNavigate();
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    console.log(email);
-    console.log("Sent link");
-    navigate("/sent-reset-email");
+    const validationErrors = validateForm(email, "update-password");
+    setErrors(validationErrors);
+    if (Object.values(validationErrors).some(Boolean)) {
+      return;
+    }
+    try {
+      await updatePassword({ email }).unwrap();
+      navigate("/sent-reset-email");
+    } catch (error) {
+      setErrors({ apiError: error.data?.message || "Update password failed" });
+    }
   };
 
-  return (
-    <FormContainer>
-      <h1>Update your password</h1>
-      <Form onSubmit={submitHandler}>
-        <Form.Text className="text-muted">
-          Enter your email link, we will send you the recovery link
-        </Form.Text>
-
-        <Form.Group className="my-2" controlId="email">
-          <Form.Label>Email</Form.Label>
-          <Form.Control
-            type="email"
-            placeholder="Enter email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          ></Form.Control>
-        </Form.Group>
-
-        <Button type="submit" variant="primary">
-          Update password
-        </Button>
-      </Form>
-    </FormContainer>
+  return isLoading ? (
+    <Loader />
+  ) : (
+    <AuthForm
+      mode="update-password"
+      title="Update your password"
+      onSubmit={submitHandler}
+      email={email}
+      setEmail={setEmail}
+      errors={errors}
+    />
   );
 };
 

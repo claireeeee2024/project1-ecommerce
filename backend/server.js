@@ -26,7 +26,7 @@ app.use(cors());
 //add routers here
 app.use("/api/users", userRoutes);
 app.use("/carts", cartRouter);
-app.use("/products", productRouter);
+app.use("/api/products", productRouter);
 
 const dirname = path.resolve();
 if (process.env.NODE_ENV === "production") {

@@ -1,70 +1,52 @@
 import { useState } from "react";
-import FormContainer from "../components/FormContainer";
+import AuthForm from "../components/AuthForm";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useLoginMutation } from "../slices/usersApiSlice";
+import { setCredentials } from "../slices/authSlice";
+import { validateForm } from "../utils/validation";
+import Loader from "../components/Loader";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const [login, { isLoading }] = useLoginMutation();
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    console.log("Submitted");
+    const validationErrors = validateForm(email, password);
+    setErrors(validationErrors);
+    if (Object.values(validationErrors).some(Boolean)) {
+      return;
+    }
+
+    try {
+      const res = await login({ email, password }).unwrap();
+      dispatch(setCredentials({ ...res }));
+      navigate("/");
+    } catch (error) {
+      setErrors({ apiError: error.data?.message || "Login failed" });
+    }
   };
-  return (
-    <FormContainer>
-      <div className="card-body mt-4">
-        <h4 className="text-bg-light text-center mb-4">
-          Sign in to your account
-        </h4>
-        <form onSubmit={submitHandler}>
-          <div className="mb-3">
-            <label htmlFor="email" className="form-label">
-              Email
-            </label>
 
-            <input
-              type="email"
-              className="form-control"
-              id="email"
-              placeholder="Enter email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="password" className="form-label">
-              Password
-            </label>
-
-            <input
-              type="password"
-              className="form-control"
-              id="password"
-              placeholder="Enter password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-          <div className="d-grid">
-            <button type="submit" className="btn btn-primary">
-              Sign In
-            </button>
-          </div>
-          <div className="row my-4 ">
-            <small className="col-12 col-md-6 d-flex justify-content-md-start justify-content-center mb-2 mb-md-0">
-              Don't have an account?{" "}
-              <a href="/register" className="ms-1">
-                Sign up
-              </a>
-            </small>
-            <small className="col-12 col-md-6 d-flex justify-content-md-end justify-content-center">
-              <a href="/update-password" className="ms-1">
-                Forgot password?
-              </a>
-            </small>
-          </div>
-        </form>
-      </div>
-    </FormContainer>
+  return isLoading ? (
+    <Loader />
+  ) : (
+    <AuthForm
+      mode="login"
+      title="Sign in to your account"
+      email={email}
+      setEmail={setEmail}
+      password={password}
+      setPassword={setPassword}
+      onSubmit={submitHandler}
+      errors={errors}
+    />
   );
 };
 
