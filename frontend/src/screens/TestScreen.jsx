@@ -1,14 +1,21 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { addCartItems, setCartItems } from "../slices/cartSlice";
+import { addToCart, setCartItems } from "../slices/cartSlice";
+import { useNavigate } from "react-router-dom";
 const TestScreen = () => {
   const dispatch = useDispatch();
   const handleClick = (item) => {
-    dispatch(addCartItems({ ...item }));
+    dispatch(addToCart({ ...item, qty: 1 }));
+  };
+
+  const handleDivClick = (id) => {
+    navigate(`/product/${id}`);
   };
 
   const [data, setData] = useState([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch("http://localhost:8080/products")
@@ -23,7 +30,11 @@ const TestScreen = () => {
   }, []);
 
   return data.map((item, index) => (
-    <div style={{ border: "solid" }} key={index}>
+    <div
+      style={{ border: "solid" }}
+      key={index}
+      onClick={() => handleDivClick(item._id)}
+    >
       <div>name: {item.name}</div>
       <div>price: {item.price}</div>
       <div>qty: {item.inStock}</div>
