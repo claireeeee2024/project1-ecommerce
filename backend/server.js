@@ -11,7 +11,7 @@ import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 
 dotenv.config();
 
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 8080;
 connectDB();
 
 const app = express();
@@ -25,7 +25,7 @@ app.use(cookieParser());
 app.use(cors());
 //add routers here
 app.use("/api/users", userRoutes);
-app.use("/carts", cartRouter);
+app.use("/api/carts", cartRouter);
 app.use("/api/products", productRouter);
 
 const dirname = path.resolve();

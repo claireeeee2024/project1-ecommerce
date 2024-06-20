@@ -7,7 +7,7 @@ const ProductDetailScreen = () => {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    fetch(`http://localhost:8080/products/${id}`)
+    fetch(`http://localhost:8000/api/products/${id}`)
       .then((res) => res.json())
       .then((info) => {
         setData(info);
