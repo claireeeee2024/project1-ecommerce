@@ -3,12 +3,19 @@ import { useGetProductsQuery } from "../slices/productApiSlice";
 import Product from "../components/Product";
 import Pagination from "../components/Pagination";
 import { Container, Row, Col } from 'react-bootstrap';
-import { Dropdown, DropdownButton } from 'react-bootstrap';
+import { Dropdown, DropdownButton, Button } from 'react-bootstrap';
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { setPage, setSortOption } from "../slices/productSlice";
 
 
 export const ProductList = () => {
-    const [sortOption, setSortOption] = useState(localStorage.getItem('sortOption') || undefined);
-    const [currentPage, setCurrentPage] = useState( 1);
+    const [sortOption, setSortOption] = useState(localStorage.getItem('sortOption') || "lastAdded");
+    const [currentPage, setCurrentPage] = useState(localStorage.getItem('page') || 1);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const userInfo = useSelector((state) => state.auth.userInfo) || null;
+
     const pageSize = 12;
     const { data, isLoading, error } = useGetProductsQuery({
       page: currentPage,
@@ -22,24 +29,20 @@ export const ProductList = () => {
         localStorage.setItem('sortOption', sortOption);
       }, [sortOption]);
 
-    
-    const sortProducts = (products) => {
-        switch (sortOption) {
-          case 'lastAdded':
-            return [...products];
-          case 'priceLowToHigh':
-            return [...products].sort((a, b) => a.price - b.price);
-          case 'priceHighToLow':
-            return [...products].sort((a, b) => b.price - a.price);
-          default:
-            return products;
-        }
-    };
+      useEffect(() => {
+        localStorage.setItem('page', currentPage);
+      }, [currentPage]);
     
   
     const handlePageChange = (page) => {
+        dispatch(setPage(page));
       setCurrentPage(page);
     };
+
+    // const handleSortChange = (sort) => {
+    //     dispatch(setSortOption(sort));
+    //     setSortOption(sort);
+    // }
   
     return (
       <Container>
@@ -51,7 +54,7 @@ export const ProductList = () => {
         ) : (
           <>
           <Row className="justify-content-end mb-3">
-                <Col xs={12} md={4}>
+                <Col xs={12} md={2}>
                     <DropdownButton
                     id="sort-dropdown"
                     title={`Sort By: ${sortOption.replace(/([a-z])([A-Z])/g, '$1 $2')}`}
@@ -68,9 +71,20 @@ export const ProductList = () => {
                     </Dropdown.Item>
                     </DropdownButton>
                 </Col>
+                <Col xs={12} md={2} className="d-flex justify-content-center justify-content-md-end">
+                {userInfo && userInfo.isVendor === true ? (
+                    <Button
+                    variant="primary"
+                    onClick={() => navigate("/products/add")}
+                    >
+                    Add Product
+                    </Button>
+                ) : null
+                }
+                </Col>
             </Row>
             <Row>
-                  {sortProducts(data?.products).map((product) => (
+                  {data?.products.map((product) => (
                     <Col key={product.id} xs={12} sm={6} md={4} lg={3}>
                       <Product product={product} />
                     </Col>
