@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useGetProductsQuery } from "../slices/productSlice";
+import { useGetProductsQuery } from "../slices/productApiSlice";
 import Product from "../components/Product";
 import Pagination from "../components/Pagination";
 import { Container, Row, Col } from 'react-bootstrap';
@@ -8,7 +8,7 @@ import { Dropdown, DropdownButton } from 'react-bootstrap';
 
 export const ProductList = () => {
     const [sortOption, setSortOption] = useState(localStorage.getItem('sortOption') || undefined);
-    const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState( 1);
     const pageSize = 12;
     const { data, isLoading, error } = useGetProductsQuery({
       page: currentPage,
