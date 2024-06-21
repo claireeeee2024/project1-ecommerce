@@ -6,7 +6,6 @@ import {
   Route,
   RouterProvider,
 } from "react-router-dom";
-import store from "./store";
 import App from "./App";
 import HomeScreen from "./screens/HomeScreen";
 import LoginScreen from "./screens/LoginScreen";
@@ -14,23 +13,24 @@ import RegisterScreen from "./screens/RegisterScreen";
 import UpdatePasswordScreen from "./screens/UpdatePasswordScreen";
 import SentResetEmailScreen from "./screens/SentResetEmailScreen";
 import { Provider } from "react-redux";
+import store from "./store";
 import CheckoutScreen from "./screens/CheckoutScreen";
-import TestScreen from "./screens/TestScreen";
-import ErrorScreen from "./screens/ErrorScreen";
-// import ProductScreen from "./screens/ProductScreen";
+import { enableMapSet } from "immer";
+import ProductDetailScreen from "./screens/ProductDetailScreen";
+
+enableMapSet();
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
       <Route index={true} path="/" element={<HomeScreen />} />
-      <Route index={true} path="/" element={<TestScreen />} />
       <Route path="/login" element={<LoginScreen />} />
       <Route path="/register" element={<RegisterScreen />} />
       <Route path="/update-password" element={<UpdatePasswordScreen />} />
       <Route path="/sent-reset-email" element={<SentResetEmailScreen />} />
       <Route path="/checkout" element={<CheckoutScreen />} />
-      {/* <Route path="/products" element={<ProductScreen />} /> */}
-      <Route path="*" element={<ErrorScreen />} />
+      <Route path="/products/:id" element={<ProductDetailScreen />} />
+
       <Route />
     </Route>
   )

@@ -79,6 +79,10 @@ const Header = () => {
                 </li>
               )}
               <div className="nav-item">
+                {/* <li className="nav-item" onClick={handleClick}>
+                  <i className="bi bi-cart3"></i> $0.0
+                  {cartVisible && <Cart onClose={handleClose} />}
+                </li> */}
                 <button onClick={handleClick}>
                   <i className="bi bi-cart3"></i>{" "}
                   <span className="position-absolute top-10 start-10 translate-middle badge border border-light rounded-circle bg-danger p-2">
