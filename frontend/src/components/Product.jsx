@@ -59,7 +59,7 @@ const Product = ({ product }) => {
         ) : (
           <Card.Subtitle>Out of Stock</Card.Subtitle>
         )}
-        {userInfo && userInfo.isVendor === true ? (
+        {userInfo && userInfo.isVendor === true && userInfo._id.toString() === product.vendor.toString()  ? (
           <Button variant="primary" className="mr-2">
             Edit product
           </Button>
