@@ -1,6 +1,7 @@
 import { Container, Row, Col, Button } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import Loader from "../components/Loader";
 
 const ProductDetailScreen = () => {
   const { id } = useParams();
@@ -17,7 +18,7 @@ const ProductDetailScreen = () => {
       });
   }, [id]);
 
-  if (!data) return <div>loading...</div>;
+  if (!data) return <Loader />;
 
   return (
     <Container>
@@ -25,7 +26,7 @@ const ProductDetailScreen = () => {
       <Row className="bg-white py-3 my-auto">
         <Col md={6} className="px-3">
           <img
-            src="https://picsum.photos/400/300"
+            src={data.images[0]}
             alt=""
             style={{ width: "100%" }}
           />

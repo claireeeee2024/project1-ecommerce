@@ -9,15 +9,15 @@ const Product = ({ product }) => {
     const userInfo = useSelector((state) => state.auth.userInfo) || null;
     const [createCartItem] = useCreateCartItemMutation();
     const navigate = useNavigate();
-    
+
     const handleClick = async (newItem) => {
         if (!userInfo) {
           window.alert("Please log in to add items to cart");
             navigate("/login");
           return;
         }
-
         try {
+            console.log(userInfo._id);
           await createCartItem({
             userId: userInfo._id,
             newItem: {

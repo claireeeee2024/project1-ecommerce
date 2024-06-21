@@ -7,6 +7,7 @@ import { Dropdown, DropdownButton, Button } from 'react-bootstrap';
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setPage, setSortOption } from "../slices/productSlice";
+import Loader from "../components/Loader";
 
 
 export const ProductList = () => {
@@ -48,13 +49,13 @@ export const ProductList = () => {
       <Container>
         <h2>Products : </h2>
         {isLoading ? (
-          <p>Loading...</p>
+            <Loader />
         ) : error ? (
           <p>Error: {error.message}</p>
         ) : (
           <>
-          <Row className="justify-content-end mb-3">
-                <Col xs={12} md={2}>
+          <Row className="d-flex justify-content-end mb-3" >
+                <Col xs={12} md={4} >
                     <DropdownButton
                     id="sort-dropdown"
                     title={`Sort By: ${sortOption.replace(/([a-z])([A-Z])/g, '$1 $2')}`}
@@ -71,21 +72,21 @@ export const ProductList = () => {
                     </Dropdown.Item>
                     </DropdownButton>
                 </Col>
-                <Col xs={12} md={2} className="d-flex justify-content-center justify-content-md-end">
-                {userInfo && userInfo.isVendor === true ? (
-                    <Button
-                    variant="primary"
-                    onClick={() => navigate("/products/add")}
-                    >
-                    Add Product
-                    </Button>
-                ) : null
-                }
+                <Col xs={12} md={2} >
+                    {userInfo && userInfo.isVendor === true ? (
+                        <Button
+                        variant="primary"
+                        onClick={() => navigate("/products/add")} //navigate to add product page
+                        >
+                        Add Product
+                        </Button>
+                    ) : null
+                    }
                 </Col>
             </Row>
             <Row>
                   {data?.products.map((product) => (
-                    <Col key={product.id} xs={12} sm={6} md={4} lg={3}>
+                    <Col key={product._id} xs={12} sm={6} md={4} lg={3}>
                       <Product product={product} />
                     </Col>
                   ))}

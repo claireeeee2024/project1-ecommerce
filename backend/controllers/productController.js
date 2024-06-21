@@ -1,5 +1,6 @@
 import Product from "../models/product.js";
 import asyncHandler from "express-async-handler";
+import User from "../models/userModel.js";
 
 /**
  * Get all products
@@ -79,6 +80,12 @@ export const createProduct = asyncHandler(async (req, res) => {
   //     res.status(400).json({ message: "Product already exists" });
   // }
 
+  const vendorId = vendor.toString();
+  const existingVendor = await User.findById(vendorId);
+  if (!existingVendor) {
+    return res.status(404).json({ message: "Vendor not found" });
+  }
+
   const product = new Product({
     name,
     description,
@@ -86,7 +93,7 @@ export const createProduct = asyncHandler(async (req, res) => {
     price,
     inStock,
     images,
-    vendor,
+    vendor: existingVendor._id,
   });
   const createdProduct = await product.save();
   res.status(201).json(createdProduct);
@@ -118,7 +125,6 @@ export const updateProduct = asyncHandler(async (req, res) => {
   product.price = Number(price) || product.price;
   product.inStock = Number(inStock) || product.inStock;
   product.images = images || product.images;
-  product.vendor = vendor || product.vendor;
 
   const updatedProduct = await product.save();
   res.json(updatedProduct);
@@ -132,9 +138,13 @@ export const updateProduct = asyncHandler(async (req, res) => {
 
 export const deleteProduct = asyncHandler(async (req, res) => {
   const product = await Product.findById(req.params.id);
+  const vendorId = req.user._id.toString();
   
   if (!product) {
     return res.status(404).json({ message: "Product not found" });
+  }
+  if (product.vendor.toString() !== vendorId) {
+    return res.status(401).json({ message: "You are not allowed to delete this product" });
   }
 
   const deleted = await Product.deleteOne({ _id: req.params.id });
