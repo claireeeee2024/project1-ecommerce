@@ -4,6 +4,12 @@ import { Pagination as ReactPagination } from 'react-bootstrap';
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 
   const handlePageClick = (page) => {
+    if (page < 1){
+      page = 1;
+    }
+    if (page > totalPages){
+      page = totalPages;
+    }
     onPageChange(page);
   };
 
