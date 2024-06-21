@@ -2,6 +2,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useLogoutMutation } from "../slices/usersApiSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../slices/authSlice";
+import Message from "./Message";
 
 import { setCartItems } from "../slices/cartSlice";
 import React from "react";
@@ -17,16 +18,6 @@ const Header = () => {
   const navigate = useNavigate();
 
   const [logoutApiCall] = useLogoutMutation();
-
-  useEffect(() => {
-    if (logoutMessage) {
-      const timer = setTimeout(() => {
-        setLogoutMessage(null);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [logoutMessage]);
-
   const logoutHandler = async () => {
     try {
       await logoutApiCall().unwrap();
@@ -36,35 +27,13 @@ const Header = () => {
     } catch (err) {
       console.error(err);
       setLogoutMessage({
-        type: "error",
+        type: "danger",
         text: "Logout failed. Please try again.",
       });
     }
   };
 
   const handleClick = () => {
-    //   const cartData = {
-    //     items: [
-    //       {
-    //         id: 1,
-    //         name: "Meta Quest2 VR",
-    //         price: 299.0,
-    //         quantity: 1,
-    //         image: "url_to_image",
-    //       },
-    //       {
-    //         id: 2,
-    //         name: "iWatch",
-    //         price: 100.0,
-    //         quantity: 2,
-    //         image: "url_to_image",
-    //       },
-    //     ],
-    //     total: 499.0,
-    //     tax: 49.9,
-    //     discount: 20.0,
-    //   };
-    //   dispatch(setCartItems(cartData));
     setCartVisible(true);
   };
   const handleClose = () => {
@@ -124,18 +93,12 @@ const Header = () => {
         </div>
       </nav>
       {logoutMessage && (
-        <div
-          className={`alert alert-${logoutMessage.type} alert-dismissible fade show mt-3`}
-          role="alert"
+        <Message
+          type={logoutMessage.type}
+          onClose={() => setLogoutMessage(null)}
         >
           {logoutMessage.text}
-          <button
-            type="button"
-            className="btn-close"
-            data-bs-dismiss="alert"
-            aria-label="Close"
-          ></button>
-        </div>
+        </Message>
       )}
     </header>
   );
