@@ -10,7 +10,7 @@ import { setPage, setSortOption } from "../slices/productSlice";
 
 
 export const ProductList = () => {
-    const [sortOption, setSortOption] = useState(localStorage.getItem('sortOption') || "lastAdded");
+    const [sortOption, setSortOption] = useState(localStorage.getItem('sortOption') || "lastAdded"); //change to redux later
     const [currentPage, setCurrentPage] = useState(localStorage.getItem('page') || 1);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -104,3 +104,5 @@ export const ProductList = () => {
       </Container>
     );
   };
+
+  
