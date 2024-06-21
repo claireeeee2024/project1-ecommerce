@@ -17,6 +17,7 @@ import store from "./store";
 import CheckoutScreen from "./screens/CheckoutScreen";
 import { enableMapSet } from "immer";
 import ProductDetailScreen from "./screens/ProductDetailScreen";
+import ErrorScreen from "./screens/ErrorScreen";
 
 enableMapSet();
 
@@ -30,8 +31,7 @@ const router = createBrowserRouter(
       <Route path="/sent-reset-email" element={<SentResetEmailScreen />} />
       <Route path="/checkout" element={<CheckoutScreen />} />
       <Route path="/products/:id" element={<ProductDetailScreen />} />
-
-      <Route />
+      <Route path="*" element={<ErrorScreen />} />
     </Route>
   )
 );
