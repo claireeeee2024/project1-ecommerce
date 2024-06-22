@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   useDeleteCartItemMutation,
@@ -6,11 +6,13 @@ import {
   useUpdateCartItemMutation,
 } from "../slices/cartSlice";
 import { useMemo } from "react";
+import { useSelector } from "react-redux";
 import "./app.css";
 
 const Cart = ({ onClose }) => {
   const navigate = useNavigate();
-  const userId = "60c72b2f9b1d8c30d8f8e6e6";
+
+  const userId = useSelector((state) => state.auth.userInfo._id) || null;
   const { data, error, isLoading } = useGetCartsQuery({
     id: userId,
   });
