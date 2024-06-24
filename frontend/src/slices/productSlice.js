@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
     page : localStorage.getItem("page") ? localStorage.getItem("page") : 1,
     sortOption : localStorage.getItem("sortOption") ? localStorage.getItem("sortOption") : 'lastAdded',
+    searchKeyword: "",
 };
 
 
@@ -19,8 +20,11 @@ const productSlice = createSlice({
             state.sortOption = action.payload;
             localStorage.setItem("sortOption", JSON.stringify(action.payload));
         },
+        setSearchKeyword: (state, action) => {
+            state.searchKeyword = action.payload;
+        }
     },
 });
 
-export const { setPage, setSort } = productSlice.actions;
+export const { setPage, setSort, setSearchKeyword } = productSlice.actions;
 export default productSlice.reducer;

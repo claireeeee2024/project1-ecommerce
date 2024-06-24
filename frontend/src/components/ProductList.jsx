@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useGetProductsQuery } from "../slices/productApiSlice";
 import Product from "../components/Product";
 import Pagination from "../components/Pagination";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Form } from "react-bootstrap";
 import { Dropdown, DropdownButton, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,6 +19,7 @@ export const ProductList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userInfo = useSelector((state) => state.auth.userInfo) || null;
+  const searchKeyword = useSelector((state) => state.product.searchKeyword) || "";
 
   const pageSize = 12;
   const { data, isLoading, error } = useGetProductsQuery(
@@ -26,6 +27,7 @@ export const ProductList = () => {
       page: currentPage,
       limit: pageSize,
       sort: sortOption,
+      keywords: searchKeyword,
     },
     { refetchOnMountOrArgChange: true }
   );
@@ -43,10 +45,6 @@ export const ProductList = () => {
     setCurrentPage(page);
   };
 
-  // const handleSortChange = (sort) => {
-  //     dispatch(setSortOption(sort));
-  //     setSortOption(sort);
-  // }
 
   return (
     <Container>
@@ -90,11 +88,16 @@ export const ProductList = () => {
             </Col>
           </Row>
           <Row>
-            {data?.products.map((product) => (
-              <Col key={product._id} xs={12} sm={6} md={4} lg={3}>
-                <Product product={product} />
-              </Col>
-            ))}
+            {data?.products.length === 0 ? (
+              <h2>No products found</h2>
+            ) : (
+              data?.products.map((product) => (
+                <Col key={product._id} xs={12} sm={6} md={4} lg={3}>
+                  <Product product={product} />
+                </Col>
+              ))
+            )}
+          
           </Row>
           <Row className="justify-content-center justify-content-md-end mt-4">
             <Col xs={12} md={6}>

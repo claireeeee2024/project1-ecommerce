@@ -11,8 +11,8 @@ export const getProducts = asyncHandler(async (req, res) => {
   const page = parseInt(req.query.page) || 1; // Pagination, current page number
   const pageSize = parseInt(req.query.limit) || 10; //  number of products per page
   const skip = (page - 1) * pageSize; // number of products to skip
-  const total = await Product.countDocuments(); // total number of products
-
+  
+  const searchQuery = req.query.keywords || '';
   const sortOption = req.query.sort || 'createdAt';
 
   let sortQuery = {createdAt: 1};
@@ -24,7 +24,19 @@ export const getProducts = asyncHandler(async (req, res) => {
     sortQuery = { createdAt: -1 };
   }
 
-  const products = await Product.find()
+  let filter = {};
+  if (searchQuery && searchQuery !== "") {
+    const regexPattern = searchQuery.split('').join('.*');
+    filter = {
+      $or: [
+        { name: { $regex: regexPattern, $options: "i" } },
+        { description: { $regex: regexPattern, $options: "i" } },
+        { category: { $regex: regexPattern, $options: "i" } },
+      ],
+    };
+  };
+  const total = await Product.countDocuments(filter); // total number of products
+  const products = await Product.find(filter)
     .sort(sortQuery)
     .skip(skip)
     .limit(pageSize)
@@ -36,6 +48,7 @@ export const getProducts = asyncHandler(async (req, res) => {
     total,
   });
 });
+
 
 /**
  * Get a product by ID
