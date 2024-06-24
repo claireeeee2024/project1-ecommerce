@@ -3,7 +3,9 @@ import { useLogoutMutation } from "../slices/usersApiSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../slices/authSlice";
 import Message from "./Message";
-
+import { Button } from "react-bootstrap";
+import { setSearchKeyword } from "../slices/productSlice";
+import { Form } from "react-bootstrap";
 import { setCartItems } from "../slices/cartSlice";
 import React from "react";
 import { useState, useEffect } from "react";
@@ -13,6 +15,7 @@ const Header = () => {
   const { userInfo } = useSelector((state) => state.auth);
   const [cartVisible, setCartVisible] = useState(false);
   const [logoutMessage, setLogoutMessage] = useState(null);
+  const [searchInput, setSearchInput] = useState(useSelector((state) => state.product.searchKeyword) || "");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -39,13 +42,28 @@ const Header = () => {
   const handleClose = () => {
     setCartVisible(false);
   };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    dispatch(setSearchKeyword(searchInput));
+    navigate('/');
+  }
   return (
     <header>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
         <div className="container">
           <Link className="navbar-brand" to="/">
-            Product Management System
+            Product Management System   
           </Link>
+          <Form onSubmit={handleSearch} className="d-flex mx-auto">
+                <Form.Control
+                  type="text"
+                  placeholder="Search products"
+                  className="form-control me-2 flex-grow-1"
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                />
+              </Form>
           <button
             className="navbar-toggler"
             type="button"
