@@ -10,7 +10,7 @@ export const getCartItems = asyncHandler(async (req, res) => {
   const cart = await Cart.findOne({
     user: new mongoose.Types.ObjectId(req.params.id),
   });
-  //   console.log(cart);
+  console.log("cart: ", cart);
   if (!cart) {
     const newCart = new Cart({ user: req.params.id, cartItems: [] });
     await newCart.save();
@@ -61,9 +61,9 @@ export const createCartItem = asyncHandler(async (req, res) => {
 // @access  Public
 export const updateCartItem = asyncHandler(async (req, res) => {
   let { userId, itemId, operation } = req.body;
-  console.log("userid: ", userId);
-  console.log("itemid: ", itemId);
-  console.log("operation: ", operation);
+  //   console.log("userid: ", userId);
+  //   console.log("itemid: ", itemId);
+  //   console.log("operation: ", operation);
 
   const cart = await Cart.findOne({
     user: new mongoose.Types.ObjectId(userId),
@@ -102,11 +102,12 @@ export const deleteCartItem = asyncHandler(async (req, res) => {
 
   //   itemId = new mongoose.Types.ObjectId(itemId);
 
-  const updatedCartItems = cart.cartItems.filter((item) => !item.id === itemId);
+  const updatedCartItems = cart.cartItems.filter((item) => item.id !== itemId);
   //   console.log("update: ", updatedCartItems);
   cart.cartItems = updatedCartItems;
   await cart.save();
-  //   console.log("successfully delete");
+
+  console.log("successfully delete: " + itemId);
 
   res.status(200).json({ message: "Item removed from cart", cart });
 });
