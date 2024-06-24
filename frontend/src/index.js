@@ -18,6 +18,9 @@ import CheckoutScreen from "./screens/CheckoutScreen";
 import { enableMapSet } from "immer";
 import ProductDetailScreen from "./screens/ProductDetailScreen";
 import ErrorScreen from "./screens/ErrorScreen";
+import VendorRoute from "./components/VendorRoute";
+import ProductCreateScreen from "./screens/vendor/ProductCreateScreen";
+import UnauthorizedScreen from "./screens/UnauthorizedScreen";
 
 enableMapSet();
 
@@ -31,6 +34,11 @@ const router = createBrowserRouter(
       <Route path="/sent-reset-email" element={<SentResetEmailScreen />} />
       <Route path="/checkout" element={<CheckoutScreen />} />
       <Route path="/products/:id" element={<ProductDetailScreen />} />
+
+      <Route path="/" element={<VendorRoute />}>
+        <Route path="/products/add" element={<ProductCreateScreen />} />
+      </Route>
+      <Route path="/unauthorized" element={<UnauthorizedScreen />} />
       <Route path="*" element={<ErrorScreen />} />
     </Route>
   )
