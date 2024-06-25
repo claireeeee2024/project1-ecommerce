@@ -23,7 +23,9 @@ const Header = () => {
       await logoutApiCall().unwrap();
       dispatch(logout());
       setLogoutMessage({ type: "success", text: "Logged out successfully" });
-      navigate("/login");
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
     } catch (err) {
       console.error(err);
       setLogoutMessage({
