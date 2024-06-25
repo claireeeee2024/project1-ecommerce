@@ -37,6 +37,7 @@ const UpdatePasswordScreen = () => {
       email={email}
       setEmail={setEmail}
       errors={errors}
+      setErrors={setErrors}
     />
   );
 };

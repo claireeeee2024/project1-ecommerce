@@ -47,6 +47,7 @@ const RegisterScreen = () => {
       isVendor={isVendor}
       setIsVendor={setIsVendor}
       errors={errors}
+      setErrors={setErrors}
     />
   );
 };

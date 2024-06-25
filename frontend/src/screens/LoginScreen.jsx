@@ -11,7 +11,6 @@ const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -19,6 +18,8 @@ const LoginScreen = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
+    console.log(errors);
+    console.log(email, password);
     const validationErrors = validateForm(email, password);
     setErrors(validationErrors);
     if (Object.values(validationErrors).some(Boolean)) {
@@ -28,7 +29,10 @@ const LoginScreen = () => {
     try {
       const res = await login({ email, password }).unwrap();
       dispatch(setCredentials({ ...res }));
-      navigate("/");
+
+      setTimeout(() => {
+        navigate("/");
+      }, 1000);
     } catch (error) {
       setErrors({ apiError: error.data?.message || "Login failed" });
     }
@@ -46,6 +50,7 @@ const LoginScreen = () => {
       setPassword={setPassword}
       onSubmit={submitHandler}
       errors={errors}
+      setErrors={setErrors}
     />
   );
 };
