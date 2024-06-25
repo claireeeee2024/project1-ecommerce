@@ -23,35 +23,54 @@ export const validateForm = (email, password) => {
   return errors;
 };
 
-export const validateProductForm = (
-  name,
-  description,
-  category,
-  price,
-  inStock,
-  image
-) => {
-  const errors = {};
+export const validateName = (name) => {
+  if (!name) {
+    return "Product name is required.";
+  }
+  return null;
+};
 
-  if (!name) errors.name = "Product name is required.";
-  if (!description) errors.description = "Product description is required.";
-  if (!category) errors.category = "Category is required.";
-  if (!price || price <= 0) errors.price = "Valid price is required.";
-  if (inStock <= 0)
-    errors.inStock = "In stock quantity should be greater than 0.";
-  if (!image) errors.image = "Product image is required.";
+export const validateDescription = (description) => {
+  if (!description) {
+    return "Product description is required.";
+  }
+  return null;
+};
 
-  if (image) {
+export const validateCategory = (category) => {
+  if (!category) {
+    return "Category is required.";
+  }
+  return null;
+};
+
+export const validatePrice = (price) => {
+  if (!price || price < 0) {
+    return "Valid price is required.";
+  }
+  return null;
+};
+
+export const validateInStock = (inStock) => {
+  if (!inStock || inStock < 0) {
+    return "In stock quantity should be greater than 0.";
+  }
+  return null;
+};
+
+export const validateImage = (image) => {
+  if (!image && typeof image !== "string") {
+    return "Product image is required.";
+  }
+  if (image instanceof File) {
     const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
     if (!allowedTypes.includes(image.type)) {
-      errors.image = "Only JPEG, PNG, and WEBP images are allowed.";
+      return "Only JPEG, PNG, and WEBP images are allowed.";
     }
-
     const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
     if (image.size > maxSizeInBytes) {
-      errors.image = "Image size should be less than 5MB.";
+      return "Image size should be less than 5MB.";
     }
   }
-
-  return errors;
+  return null;
 };

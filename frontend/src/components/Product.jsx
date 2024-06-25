@@ -59,9 +59,12 @@ const Product = ({ product }) => {
           {userInfo &&
           userInfo.isVendor === true &&
           userInfo._id.toString() === product.vendor.toString() ? (
-            <Button variant="primary" className="mr-2">
+            <Link
+              to={`/products/edit/${product._id}`}
+              className="btn btn-primary ml-2"
+            >
               Edit product
-            </Button>
+            </Link>
           ) : null}
         </div>
       </Card.Body>

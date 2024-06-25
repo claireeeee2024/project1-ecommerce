@@ -1,43 +1,48 @@
 const products = [
   {
-    name: "Product 1",
-    description: "Description for product 1",
-    category: "Category 1",
-    price: 99.99,
+    name: "iPad Pro 11-inch",
+    description:
+      "Apple M4 chip delivers outrageous performance for pro workflows and all-day battery life",
+    category: "iPad",
+    price: 999,
     inStock: 10,
-    images: ["http://example.com/image1.jpg"],
+    images: ["/uploads/ipad-pro.jpeg"],
   },
   {
-    name: "Product 2",
-    description: "Description for product 2",
-    category: "Category 2",
-    price: 49.99,
+    name: "iPad mini",
+    description:
+      "A15 Bionic chip for incredible performance and all-day battery life footnote",
+    category: "iPad",
+    price: 499,
     inStock: 20,
-    images: ["http://example.com/image2.jpg"],
+    images: ["/uploads/ipad-mini.jpeg"],
   },
   {
-    name: "Product 3",
-    description: "Description for product 3",
-    category: "Category 1",
-    price: 29.99,
+    name: "iPhone 15 Pro",
+    description:
+      "A17 Pro is an entirely new class of iPhone chip that delivers our best graphics performance by far.",
+    category: "iPhone",
+    price: 999,
     inStock: 0,
-    images: ["http://example.com/image3.jpg"],
+    images: ["/uploads/iphone-15-pro.jpg"],
   },
   {
-    name: "Product 4",
-    description: "Description for product 4",
-    category: "Category 3",
+    name: "iPhone 14",
+    description:
+      "With the most impressive dual-camera system on iPhone. Capture stunning photos in low light and bright light. ",
+    category: "iPhone",
     price: 19.99,
     inStock: 50,
-    images: ["http://example.com/image4.jpg"],
+    images: ["/uploads/iphone-14.jpg"],
   },
   {
-    name: "Product 5",
-    description: "Description for product 5",
-    category: "Category 2",
-    price: 99.99,
+    name: "AirPods (3rd generation) ",
+    description:
+      "All-new design featuring spatial audio with dynamic head tracking.",
+    category: "airpods",
+    price: 179,
     inStock: 15,
-    images: ["http://example.com/image5.jpg"],
+    images: ["/uploads/airpods.jpeg"],
   },
 ];
 

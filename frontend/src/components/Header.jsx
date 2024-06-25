@@ -97,12 +97,7 @@ const Header = () => {
         </div>
       </nav>
       {logoutMessage && (
-        <Message
-          type={logoutMessage.type}
-          onClose={() => setLogoutMessage(null)}
-        >
-          {logoutMessage.text}
-        </Message>
+        <Message type={logoutMessage.type}>{logoutMessage.text}</Message>
       )}
     </header>
   );

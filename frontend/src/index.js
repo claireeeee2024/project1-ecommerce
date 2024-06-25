@@ -19,7 +19,7 @@ import { enableMapSet } from "immer";
 import ProductDetailScreen from "./screens/ProductDetailScreen";
 import ErrorScreen from "./screens/ErrorScreen";
 import VendorRoute from "./components/VendorRoute";
-import ProductCreateScreen from "./screens/vendor/ProductCreateScreen";
+import ProductForm from "./screens/vendor/ProductForm";
 import UnauthorizedScreen from "./screens/UnauthorizedScreen";
 
 enableMapSet();
@@ -36,7 +36,8 @@ const router = createBrowserRouter(
       <Route path="/products/:id" element={<ProductDetailScreen />} />
 
       <Route path="/" element={<VendorRoute />}>
-        <Route path="/products/add" element={<ProductCreateScreen />} />
+        <Route path="/products/add" element={<ProductForm />} />
+        <Route path="/products/edit/:id" element={<ProductForm />} />
       </Route>
       <Route path="/unauthorized" element={<UnauthorizedScreen />} />
       <Route path="*" element={<ErrorScreen />} />
