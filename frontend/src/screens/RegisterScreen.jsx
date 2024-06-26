@@ -1,21 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AuthForm from "../components/AuthForm";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useRegisterMutation } from "../slices/usersApiSlice";
 import { setCredentials } from "../slices/authSlice";
 import { validateForm } from "../utils/validation";
 import Loader from "../components/Loader";
+import { toast } from "react-toastify";
 
 const RegisterScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isVendor, setIsVendor] = useState(false);
   const [errors, setErrors] = useState({});
-
+  const location = useLocation();
+  const { userInfo } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const from = location.state?.from?.pathname || "/";
+
   const [register, { isLoading }] = useRegisterMutation();
+  useEffect(() => {
+    if (userInfo) {
+      navigate(from);
+    }
+  }, [userInfo, navigate, from]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -27,9 +37,9 @@ const RegisterScreen = () => {
     try {
       const res = await register({ email, password, isVendor }).unwrap();
       dispatch(setCredentials({ ...res }));
-      navigate("/");
+      navigate(from);
     } catch (error) {
-      setErrors({ apiError: error.data?.message || "Registration failed" });
+      toast.error(error.data?.message || "Registration failed");
     }
   };
 

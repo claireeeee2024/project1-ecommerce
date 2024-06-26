@@ -19,7 +19,7 @@ import {
 } from "../../utils/validation";
 import { useParams } from "react-router-dom";
 import { BASE_URL } from "../../constants";
-import Message from "../../components/Message";
+import { toast } from "react-toastify";
 
 const ProductForm = () => {
   const { id: productId } = useParams();
@@ -151,20 +151,14 @@ const ProductForm = () => {
       if (productId) {
         const updateData = { ...productData, id: productId };
         await updateProduct(updateData).unwrap();
-        setMessage({ type: "success", text: "Product updated successfully!" });
+        toast.success("Product updated successfully!");
       } else {
         await createProduct(productData).unwrap();
-        setMessage({ type: "success", text: "Product created successfully!" });
+        toast.success("Product created successfully!");
       }
-      setTimeout(() => {
-        navigate("/");
-      }, 2000);
+      navigate(productId ? `/products/${productId}` : -1);
     } catch (error) {
-      setMessage({
-        type: "danger",
-        text: error.data?.message || "Failed to save product",
-      });
-      console.log(error.data?.message || "Failed to save product");
+      toast.error(error.data?.message || "Failed to save product");
     }
   };
 
@@ -179,12 +173,6 @@ const ProductForm = () => {
             <Loader />
           ) : (
             <Form onSubmit={onSubmit}>
-              {message && (
-                <Message type={message.type} className="mb-5">
-                  {message.text}
-                </Message>
-              )}
-
               <Form.Group controlId="name" className="mb-3">
                 <Form.Label>Product Name</Form.Label>
                 <Form.Control

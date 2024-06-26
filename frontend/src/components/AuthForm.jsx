@@ -1,4 +1,5 @@
 import React from "react";
+import { Link, useLocation } from "react-router-dom";
 import { Form, Button, Container, Card } from "react-bootstrap";
 import { validatePassword, validateEmail } from "../utils/validation";
 export const EmailField = ({ email, setEmail, errors, setErrors }) => {
@@ -54,10 +55,15 @@ const AuthForm = ({
   setEmail,
   password,
   setPassword,
+  isVendor,
+  setIsVendor,
   onSubmit,
   errors,
   setErrors,
 }) => {
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
+
   const submitHandler = (e) => {
     e.preventDefault();
     onSubmit(e);
@@ -71,11 +77,18 @@ const AuthForm = ({
             <Card.Body className="mt-4 mx-3">
               <Form onSubmit={submitHandler}>
                 <h3 className="text-center mb-3">{title}</h3>
-                {errors?.apiError && (
-                  <div className="alert alert-danger mt-3 px-3 py-2">
-                    {errors.apiError}
+                {mode === "register" && (
+                  <div className="d-flex justify-content-end">
+                    <Form.Check
+                      type="switch"
+                      label="Register as a vendor"
+                      value={isVendor}
+                      onChange={(e) => setIsVendor(!isVendor)}
+                      className="mb-3"
+                    />
                   </div>
                 )}
+
                 {mode !== "sent-reset-email" && (
                   <EmailField
                     email={email}
@@ -107,17 +120,21 @@ const AuthForm = ({
                         {mode === "login" && (
                           <>
                             Don't have an account?{" "}
-                            <a href="/register" className="ms-1">
+                            <Link
+                              to="/register"
+                              state={{ from }}
+                              className="ms-1"
+                            >
                               Sign up
-                            </a>
+                            </Link>
                           </>
                         )}
                         {mode === "register" && (
                           <>
                             Already have an account?{" "}
-                            <a href="/login" className="ms-1">
+                            <Link to="/login" state={{ from }} className="ms-1">
                               Sign in
-                            </a>
+                            </Link>
                           </>
                         )}
                       </small>

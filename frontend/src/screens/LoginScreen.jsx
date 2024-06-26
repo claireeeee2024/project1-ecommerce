@@ -1,25 +1,33 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AuthForm from "../components/AuthForm";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { useLoginMutation } from "../slices/usersApiSlice";
 import { setCredentials } from "../slices/authSlice";
 import { validateForm } from "../utils/validation";
 import Loader from "../components/Loader";
+import { toast } from "react-toastify";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const { userInfo } = useSelector((state) => state.auth);
+  const [login, { isLoading }] = useLoginMutation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
 
-  const [login, { isLoading }] = useLoginMutation();
+  useEffect(() => {
+    if (userInfo) {
+      navigate(from);
+    }
+  }, [userInfo, navigate, from]);
+
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    console.log(errors);
-    console.log(email, password);
     const validationErrors = validateForm(email, password);
     setErrors(validationErrors);
     if (Object.values(validationErrors).some(Boolean)) {
@@ -29,12 +37,10 @@ const LoginScreen = () => {
     try {
       const res = await login({ email, password }).unwrap();
       dispatch(setCredentials({ ...res }));
-
-      setTimeout(() => {
-        navigate("/");
-      }, 1000);
+      toast.success("Logged in successfully");
+      navigate(from);
     } catch (error) {
-      setErrors({ apiError: error.data?.message || "Login failed" });
+      toast.error(error?.data?.message || error.error);
     }
   };
 

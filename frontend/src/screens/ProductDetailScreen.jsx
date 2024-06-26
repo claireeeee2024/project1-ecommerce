@@ -43,7 +43,11 @@ const ProductDetailScreen = () => {
             >
               Add To Cart
             </Button>
-            <Button variant="secondary" className="flex-fill">
+            <Button
+              variant="secondary"
+              className="flex-fill"
+              href={`/products/edit/${data._id}`}
+            >
               Edit
             </Button>
           </div>

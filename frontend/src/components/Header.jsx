@@ -1,4 +1,4 @@
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useLogoutMutation } from "../slices/usersApiSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../slices/authSlice";
@@ -8,31 +8,28 @@ import { setCartItems } from "../slices/cartSlice";
 import React from "react";
 import { useState, useEffect } from "react";
 import Cart from "./Cart";
+import { toast } from "react-toastify";
 
 const Header = () => {
   const { userInfo } = useSelector((state) => state.auth);
   const [cartVisible, setCartVisible] = useState(false);
-  const [logoutMessage, setLogoutMessage] = useState(null);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const location = useLocation();
   const [logoutApiCall] = useLogoutMutation();
   const logoutHandler = async () => {
     try {
       await logoutApiCall().unwrap();
       dispatch(logout());
-      setLogoutMessage({ type: "success", text: "Logged out successfully" });
-      setTimeout(() => {
-        navigate("/");
-      }, 2000);
+      toast.success("Logged out successfully");
     } catch (err) {
-      console.error(err);
-      setLogoutMessage({
-        type: "danger",
-        text: "Logout failed. Please try again.",
-      });
+      toast.success("Logout failed. Please try again.");
     }
+  };
+
+  const handleLoginClick = () => {
+    navigate("/login", { state: { from: location } });
   };
 
   const handleClick = () => {
@@ -75,9 +72,12 @@ const Header = () => {
                 </li>
               ) : (
                 <li className="nav-item">
-                  <Link className="nav-link active" to="/login">
+                  <button
+                    className="nav-link active btn btn-link"
+                    onClick={handleLoginClick}
+                  >
                     <i className="bi bi-person"></i> Sign In
-                  </Link>
+                  </button>
                 </li>
               )}
               <div className="nav-item">
@@ -98,9 +98,6 @@ const Header = () => {
           </div>
         </div>
       </nav>
-      {logoutMessage && (
-        <Message type={logoutMessage.type}>{logoutMessage.text}</Message>
-      )}
     </header>
   );
 };

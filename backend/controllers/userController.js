@@ -1,12 +1,25 @@
 import User from "../models/userModel.js";
 import asyncHandler from "../middleware/asyncHandler.js";
 import generateToken from "../utils/generateToken.js";
+import { validateEmail, validatePassword } from "../utils/validation.js";
 
 // @desc    Auth user & get token
 // @route   POST /api/users/login
 // @access  Public
 const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
+
+  const emailError = validateEmail(email);
+  const passwordError = validatePassword(password);
+  if (emailError) {
+    res.status(400);
+    throw new Error(emailError);
+  }
+  if (passwordError) {
+    res.status(400);
+    throw new Error(passwordError);
+  }
+
   const user = await User.findOne({ email });
 
   if (user && (await user.matchPassword(password))) {
@@ -27,6 +40,18 @@ const authUser = asyncHandler(async (req, res) => {
 // @access  Public
 const registerUser = asyncHandler(async (req, res) => {
   const { email, password, isVendor } = req.body;
+
+  const emailError = validateEmail(email);
+  const passwordError = validatePassword(password);
+  if (emailError) {
+    res.status(400);
+    throw new Error(emailError);
+  }
+  if (passwordError) {
+    res.status(400);
+    throw new Error(passwordError);
+  }
+
   const userExists = await User.findOne({ email });
 
   if (userExists) {
@@ -66,7 +91,12 @@ const logoutUser = asyncHandler(async (req, res) => {
 // @access  Public
 const forgotPassword = asyncHandler(async (req, res) => {
   const { email } = req.body;
+  const emailError = validateEmail(email);
 
+  if (emailError) {
+    res.status(400);
+    throw new Error(emailError);
+  }
   const user = await User.findOne({ email });
 
   if (!user) {
