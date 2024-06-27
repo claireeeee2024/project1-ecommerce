@@ -5,6 +5,9 @@ import {
   useGetItemQuery,
 } from "../slices/cartSlice";
 import { useNavigate } from "react-router-dom";
+import { useCallback } from "react";
+import _ from "lodash";
+
 export const useCartOperation = () => {
   const navigate = useNavigate();
   const [deleteCartItem] = useDeleteCartItemMutation();
@@ -65,10 +68,32 @@ export const useCartOperation = () => {
     }
   };
 
+  const debouncedHandleAdd = useCallback(
+    _.debounce((userId, productId, qty, inStock) => {
+      handleAdd(userId, productId, qty, inStock);
+    }, 200),
+    []
+  );
+
+  const debouncedHandleMinus = useCallback(
+    _.debounce((userId, productId, qty) => {
+      handleMinus(userId, productId, qty);
+    }, 200),
+    []
+  );
+
   const handleCheckout = () => {
     navigate("/checkout");
     // onClose();
   };
 
-  return { handleAdd, handleMinus, handleChange, handleRemove, handleCheckout };
+  return {
+    handleAdd,
+    handleMinus,
+    handleChange,
+    handleRemove,
+    handleCheckout,
+    debouncedHandleAdd,
+    debouncedHandleMinus,
+  };
 };

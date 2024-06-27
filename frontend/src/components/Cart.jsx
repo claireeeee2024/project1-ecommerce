@@ -36,8 +36,14 @@ const Cart = ({ onClose }) => {
     setInput(e.target.value);
   };
 
-  const { handleAdd, handleMinus, handleCheckout, handleRemove } =
-    useCartOperation();
+  const {
+    handleAdd,
+    handleMinus,
+    handleCheckout,
+    handleRemove,
+    debouncedHandleAdd,
+    debouncedHandleMinus,
+  } = useCartOperation();
 
   const taxRate = 0.1;
 
@@ -95,7 +101,7 @@ const Cart = ({ onClose }) => {
                           <div className="col-8 d-flex justify-content-between align-items-center">
                             <Button
                               onClick={() =>
-                                handleMinus(userId, item.id, item.qty)
+                                debouncedHandleMinus(userId, item.id, item.qty)
                               }
                             >
                               -
@@ -107,7 +113,7 @@ const Cart = ({ onClose }) => {
                             />
                             <Button
                               onClick={() =>
-                                handleAdd(userId, item.id, item.qty)
+                                debouncedHandleAdd(userId, item.id, item.qty)
                               }
                             >
                               +

@@ -20,7 +20,13 @@ const Product = ({ product }) => {
   });
   // console.log(data);
 
-  const { handleAdd, handleMinus, handleChange } = useCartOperation();
+  const {
+    handleAdd,
+    handleMinus,
+    handleChange,
+    debouncedHandleAdd,
+    debouncedHandleMinus,
+  } = useCartOperation();
 
   const handleClick = async (newItem) => {
     if (!userInfo) {
@@ -71,7 +77,7 @@ const Product = ({ product }) => {
             <div style={{ display: "flex", flex: 0.5 }}>
               <Button
                 onClick={() =>
-                  handleMinus(userInfo._id, product._id, data.item.qty)
+                  debouncedHandleMinus(userInfo._id, product._id, data.item.qty)
                 }
               >
                 -
@@ -83,7 +89,7 @@ const Product = ({ product }) => {
               />
               <Button
                 onClick={() =>
-                  handleAdd(
+                  debouncedHandleAdd(
                     userInfo._id,
                     product._id,
                     data.item.qty,
