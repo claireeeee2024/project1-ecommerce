@@ -9,13 +9,39 @@ import { Form } from "react-bootstrap";
 import { setCartItems } from "../slices/cartSlice";
 import React from "react";
 import { useState, useEffect } from "react";
+import { PiShoppingCart } from "react-icons/pi";
+import { FaShoppingCart, FaSearch } from "react-icons/fa";
+import { useGetCartsQuery } from "../slices/cartSlice";
+import { useMemo } from "react";
 import Cart from "./Cart";
+import "./Header.css";
 
 const Header = () => {
   const { userInfo } = useSelector((state) => state.auth);
   const [cartVisible, setCartVisible] = useState(false);
   const [logoutMessage, setLogoutMessage] = useState(null);
-  const [searchInput, setSearchInput] = useState(useSelector((state) => state.product.searchKeyword) || "");
+  const [searchInput, setSearchInput] = useState(
+    useSelector((state) => state.product.searchKeyword) || ""
+  );
+  const userId = useSelector((state) => state.auth.userInfo?._id) || null;
+  const { data, error, isLoading } = useGetCartsQuery({
+    id: userId,
+  });
+
+  const discount = 10;
+  const taxRate = 0.1;
+  const { qtys, subtotal, tax, total } = useMemo(() => {
+    const qtys = data?.cartItems?.reduce((pre, cur) => pre + cur.qty, 0);
+    const subtotal = data?.cartItems?.reduce(
+      (pre, cur) => pre + cur.price * cur.qty,
+      0
+    );
+    const tax = subtotal * taxRate;
+    let total = subtotal + tax - discount;
+    total = total < 0 ? 0 : total;
+    if (isNaN(total)) total = 0;
+    return { qtys, subtotal, tax, total };
+  }, [data]);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -37,6 +63,11 @@ const Header = () => {
   };
 
   const handleClick = () => {
+    if (!userInfo) {
+      window.alert("Please log in to add items to cart");
+      navigate("/login");
+      return;
+    }
     setCartVisible(true);
   };
   const handleClose = () => {
@@ -46,24 +77,15 @@ const Header = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     dispatch(setSearchKeyword(searchInput));
-    navigate('/');
-  }
+    navigate("/");
+  };
   return (
     <header>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
         <div className="container">
           <Link className="navbar-brand" to="/">
-            Product Management System   
+            Management <span className="chuwa">Chuwa</span>
           </Link>
-          <Form onSubmit={handleSearch} className="d-flex mx-auto">
-                <Form.Control
-                  type="text"
-                  placeholder="Search products"
-                  className="form-control me-2 flex-grow-1"
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                />
-              </Form>
           <button
             className="navbar-toggler"
             type="button"
@@ -75,11 +97,23 @@ const Header = () => {
           >
             <span className="navbar-toggler-icon"></span>
           </button>
-          <div
-            className="collapse navbar-collapse justify-content-end"
-            id="navbarNav"
-          >
-            <ul className="navbar-nav">
+          <div className="collapse navbar-collapse" id="navbarNav">
+            <Form
+              onSubmit={handleSearch}
+              className="d-flex mx-auto my-lg-0 my-2 flex-grow-1"
+            >
+              <Form.Control
+                type="text"
+                placeholder="Search"
+                className="form-control me-2"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+              />
+              <button type="submit" className="btn btn-outline-light">
+                <FaSearch />
+              </button>
+            </Form>
+            <ul className="navbar-nav ms-auto">
               {userInfo ? (
                 <li className="nav-item">
                   <button
@@ -96,20 +130,19 @@ const Header = () => {
                   </Link>
                 </li>
               )}
-              <div className="nav-item">
-                {/* <li className="nav-item" onClick={handleClick}>
-                  <i className="bi bi-cart3"></i> $0.0
-                  {cartVisible && <Cart onClose={handleClose} />}
-                </li> */}
-                <button onClick={handleClick}>
-                  <i className="bi bi-cart3"></i>{" "}
-                  <span className="position-absolute top-10 start-10 translate-middle badge border border-light rounded-circle bg-danger p-2">
-                    <span className="visually-hidden"></span>
-                  </span>{" "}
-                  $0.0
+              <li className="nav-item">
+                <button
+                  className="nav-link active btn btn-link cart-button"
+                  onClick={handleClick}
+                >
+                  <PiShoppingCart style={{ color: "white" }} />
+                  {qtys > 0 && (
+                    <span className="badge badge-custom">{qtys}</span>
+                  )}
+                  <span>${total.toFixed(2) || 0}</span>
                 </button>
                 {cartVisible && <Cart onClose={handleClose} />}
-              </div>
+              </li>
             </ul>
           </div>
         </div>
@@ -123,6 +156,80 @@ const Header = () => {
         </Message>
       )}
     </header>
+    // <header>
+    //   <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+    //     <div className="container">
+    //       <Link className="navbar-brand" to="/">
+    //         Management <small>chuwa</small>
+    //       </Link>
+    //       <Form onSubmit={handleSearch} className="d-flex mx-auto my-lg-0 my-2">
+    //         <Form.Control
+    //           type="text"
+    //           placeholder="Search products"
+    //           className="form-control me-2 flex-grow-1"
+    //           value={searchInput}
+    //           onChange={(e) => setSearchInput(e.target.value)}
+    //         />
+    //         <button type="submit" className="btn btn-outline-light">
+    //           <FaSearch />
+    //         </button>
+    //       </Form>
+    //       {/* <button
+    //         className="navbar-toggler"
+    //         type="button"
+    //         data-bs-toggle="collapse"
+    //         data-bs-target="#navbarNav"
+    //         aria-controls="navbarNav"
+    //         aria-expanded="false"
+    //         aria-label="Toggle navigation"
+    //       >
+    //         <span className="navbar-toggler-icon"></span>
+    //       </button> */}
+    //       <div
+    //         className="collapse navbar-collapse justify-content-end"
+    //         id="navbarNav"
+    //       >
+    //         <ul className="navbar-nav">
+    //           {userInfo ? (
+    //             <li className="nav-item">
+    //               <button
+    //                 className="nav-link active btn btn-link"
+    //                 onClick={logoutHandler}
+    //               >
+    //                 <i className="bi bi-person"></i> Sign Out
+    //               </button>
+    //             </li>
+    //           ) : (
+    //             <li className="nav-item">
+    //               <Link className="nav-link active" to="/login">
+    //                 <i className="bi bi-person"></i> Sign In
+    //               </Link>
+    //             </li>
+    //           )}
+    //           <li className="nav-item">
+    //             <button
+    //               className="nav-link active btn btn-link"
+    //               onClick={handleClick}
+    //             >
+    //               <PiShoppingCart style={{ color: "white" }} />
+    //               <span className="badge">{qtys || 0}</span>
+    //               <span>${total.toFixed(2) || 0}</span>
+    //             </button>
+    //             {cartVisible && <Cart onClose={handleClose} />}
+    //           </li>
+    //         </ul>
+    //       </div>
+    //     </div>
+    //   </nav>
+    //   {logoutMessage && (
+    //     <Message
+    //       type={logoutMessage.type}
+    //       onClose={() => setLogoutMessage(null)}
+    //     >
+    //       {logoutMessage.text}
+    //     </Message>
+    //   )}
+    // </header>
   );
 };
 

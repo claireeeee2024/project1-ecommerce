@@ -1,64 +1,44 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  useDeleteCartItemMutation,
-  useGetCartsQuery,
-  useUpdateCartItemMutation,
-} from "../slices/cartSlice";
+import { useGetCartsQuery } from "../slices/cartSlice";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
+import { FormControl, Button } from "react-bootstrap";
 import "./app.css";
-
+import { useCartOperation } from "../utils/changeCartItems";
+import { BASE_URL } from "../constants";
 const Cart = ({ onClose }) => {
-  const navigate = useNavigate();
-
   const userId = useSelector((state) => state.auth.userInfo._id) || null;
   const { data, error, isLoading } = useGetCartsQuery({
     id: userId,
   });
   console.log(data);
 
-  const [deleteCartItem] = useDeleteCartItemMutation();
-  const [updateCartItem] = useUpdateCartItemMutation();
+  const [input, setInput] = useState("");
+  const [discount, setDiscount] = useState(10);
 
-  const handleRemove = async (userId, itemId) => {
-    try {
-      await deleteCartItem({ userId, itemId }).unwrap();
-      console.log(`Item with id ${itemId} is deleted`);
-    } catch (error) {
-      console.error("Failed to delete the item: ", error);
+  const handleApply = () => {
+    const coupon = parseInt(input);
+    console.log(coupon);
+    if (isNaN(coupon)) {
+      setDiscount(0);
+      return;
+    }
+    setDiscount(coupon);
+  };
+
+  const handleKey = (e) => {
+    if (e.key === "Enter") {
+      handleApply();
     }
   };
 
-  const handleAdd = async (userId, itemId) => {
-    try {
-      await updateCartItem({ userId, itemId, operation: "ADD" }).unwrap();
-      console.log(`Item with id ${itemId} is added by 1`);
-    } catch (error) {
-      console.log(error);
-    }
+  const handleInput = (e) => {
+    setInput(e.target.value);
   };
 
-  const handleMinus = async (userId, itemId, qty) => {
-    try {
-      //如果点-1点的过快,这里还是会显示出负数
-      if (qty <= 1) {
-        handleRemove(userId, itemId);
-        return;
-      }
-      await updateCartItem({ userId, itemId, operation: "MINUS" }).unwrap();
-      console.log(`Item with id ${itemId} is minused by 1`);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const { handleAdd, handleMinus, handleCheckout, handleRemove } =
+    useCartOperation();
 
-  const handleCheckout = () => {
-    navigate("/checkout");
-    onClose();
-  };
-
-  const discount = 10;
   const taxRate = 0.1;
 
   const { qtys, subtotal, tax, total } = useMemo(() => {
@@ -75,11 +55,11 @@ const Cart = ({ onClose }) => {
   return (
     <>
       {isLoading ? (
-        <p>loading</p>
+        <p>Loading...</p>
       ) : error ? (
         <p>Error</p>
       ) : (
-        <div className="cart-container ">
+        <div className="cart-container">
           <div className="row justify-content-between bg-primary m-0">
             <div className="col-6">
               <h2>
@@ -93,60 +73,81 @@ const Cart = ({ onClose }) => {
             </div>
           </div>
           {data.cartItems?.length === 0 ? (
-            <div>Cart is empty</div>
+            <div className="p-5 cart-body">Cart is empty</div>
           ) : (
             <div className="p-5 cart-body">
-              <div>
-                {data.cartItems?.map((item) => (
-                  <div key={item._id} className="row py-3">
-                    <img src={item.image} alt="..." className="col-4" />
-                    <div className="col-8">
-                      <div className="row">
-                        <h5 className="col-8">{item.name}</h5>
-                        <p className="col-4">${item.price}</p>
-                      </div>
-                      <div className="row">
-                        <div className="col-6">
-                          <button
-                            onClick={() =>
-                              handleMinus(userId, item._id, item.qty)
-                            }
-                          >
-                            -
-                          </button>
-                          <span>{item.qty}</span>
-                          <button onClick={() => handleAdd(userId, item._id)}>
-                            +
-                          </button>
+              <div className="cart-items">
+                {data.cartItems
+                  ?.filter((item) => item.qty > 0)
+                  .map((item) => (
+                    <div key={item._id} className="row py-3">
+                      <img
+                        src={`${BASE_URL}${item.image}`}
+                        alt="..."
+                        className="col-4"
+                      />
+                      <div className="col-8">
+                        <div className="row">
+                          <h5 className="col-8">{item.name}</h5>
+                          <p className="col-4">${item.price}</p>
                         </div>
-                        <button
-                          className="col-6"
-                          onClick={() => handleRemove(userId, item._id)}
-                        >
-                          remove
-                        </button>
+                        <div className="row">
+                          <div className="col-8 d-flex justify-content-between align-items-center">
+                            <Button
+                              onClick={() =>
+                                handleMinus(userId, item.id, item.qty)
+                              }
+                            >
+                              -
+                            </Button>
+                            <FormControl
+                              type="text"
+                              value={item.qty}
+                              readOnly
+                            />
+                            <Button
+                              onClick={() =>
+                                handleAdd(userId, item.id, item.qty)
+                              }
+                            >
+                              +
+                            </Button>
+                          </div>
+                          <Button
+                            className="nav-link active btn btn-link col-4 "
+                            onClick={() => handleRemove(userId, item.id)}
+                          >
+                            Remove
+                          </Button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+              </div>
+              <div className="apply-discount my-3">
                 <p>Apply discount code</p>
-                <div className="row justify-content-between ">
+                <div className="row justify-content-between">
                   <input
+                    id="coupon"
                     className="col-8"
                     type="text"
                     placeholder="20 DOLLAR OFF"
+                    onKeyDown={handleKey}
+                    onChange={handleInput}
                   />
-                  <button className="col-3 btn btn-primary">Apply</button>
+                  <Button className="col-3" onClick={handleApply}>
+                    Apply
+                  </Button>
                 </div>
               </div>
-              <div className="py-2 ">
+              <div className="totals py-2">
                 <p>Subtotal: ${subtotal.toFixed(2)}</p>
                 <p>Tax: ${tax.toFixed(2)}</p>
                 <p>Discount: -${discount.toFixed(2)}</p>
                 <p>Estimated total: ${total.toFixed(2)}</p>
               </div>
               <div className="row">
-                <button className="btn btn-primary " onClick={handleCheckout}>
+                <button className="btn btn-primary" onClick={handleCheckout}>
                   Continue to checkout
                 </button>
               </div>
@@ -155,6 +156,109 @@ const Cart = ({ onClose }) => {
         </div>
       )}
     </>
+    // <>
+    //   {isLoading ? (
+    //     <p>loading</p>
+    //   ) : error ? (
+    //     <p>Error</p>
+    //   ) : (
+    //     <div className="cart-container ">
+    //       <div className="row justify-content-between bg-primary m-0">
+    //         <div className="col-6">
+    //           <h2>
+    //             Cart (<small>{qtys}</small>)
+    //           </h2>
+    //         </div>
+    //         <div className="col-2 my-auto">
+    //           <button className="btn" onClick={onClose}>
+    //             X
+    //           </button>
+    //         </div>
+    //       </div>
+    //       {data.cartItems?.length === 0 ? (
+    //         <div className="p-5 cart-body">Cart is empty</div>
+    //       ) : (
+    //         <div className="p-5 cart-body">
+    //           <div>
+    //             {data.cartItems
+    //               ?.filter((item) => item.qty > 0)
+    //               .map((item) => (
+    //                 <div key={item._id} className="row py-3">
+    //                   <img src={item.image} alt="..." className="col-4" />
+    //                   <div className="col-8">
+    //                     <div className="row">
+    //                       <h5 className="col-8">{item.name}</h5>
+    //                       <p className="col-4">${item.price}</p>
+    //                     </div>
+    //                     <div className="row">
+    //                       <div
+    //                         className="col-6"
+    //                         style={{
+    //                           display: "flex",
+    //                           justifyContent: "space-between",
+    //                         }}
+    //                       >
+    //                         <Button
+    //                           onClick={() =>
+    //                             handleMinus(userId, item.id, item.qty)
+    //                           }
+    //                         >
+    //                           -
+    //                         </Button>
+    //                         <FormControl
+    //                           type="text"
+    //                           value={item.qty}
+    //                           readOnly
+    //                         />
+    //                         <Button
+    //                           onClick={() =>
+    //                             handleAdd(userId, item.id, item.qty)
+    //                           }
+    //                         >
+    //                           +
+    //                         </Button>
+    //                       </div>
+    //                       <Button
+    //                         className="col-6"
+    //                         onClick={() => handleRemove(userId, item.id)}
+    //                       >
+    //                         remove
+    //                       </Button>
+    //                     </div>
+    //                   </div>
+    //                 </div>
+    //               ))}
+    //             <p>Apply discount code</p>
+    //             <div className="row justify-content-between ">
+    //               <input
+    //                 id="coupon"
+    //                 className="col-8"
+    //                 type="text"
+    //                 placeholder="20 DOLLAR OFF"
+    //                 onKeyDown={handleKey}
+    //                 onChange={handleInput}
+    //               />
+    //               <Button className="col-3" onClick={handleApply}>
+    //                 Apply
+    //               </Button>
+    //             </div>
+    //           </div>
+    //           <div className="py-2 ">
+    //             <p>Subtotal: ${subtotal.toFixed(2)}</p>
+    //             <p>Tax: ${tax.toFixed(2)}</p>
+    //             <p>Discount: -${discount.toFixed(2)}</p>
+    //             <p>Estimated total: ${total.toFixed(2)}</p>
+    //           </div>
+    //           <div className="row">
+    //             <button className="btn btn-primary " onClick={handleCheckout}>
+    //               Continue to checkout
+    //             </button>
+    //           </div>
+    //         </div>
+    //       )}
+    //     </div>
+    //   )}
+    // </>
   );
 };
 

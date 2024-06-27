@@ -11,22 +11,22 @@ export const getProducts = asyncHandler(async (req, res) => {
   const page = parseInt(req.query.page) || 1; // Pagination, current page number
   const pageSize = parseInt(req.query.limit) || 10; //  number of products per page
   const skip = (page - 1) * pageSize; // number of products to skip
-  
-  const searchQuery = req.query.keywords || '';
-  const sortOption = req.query.sort || 'createdAt';
 
-  let sortQuery = {createdAt: 1};
-  if (sortOption === 'priceLowToHigh') {
+  const searchQuery = req.query.keywords || "";
+  const sortOption = req.query.sort || "createdAt";
+
+  let sortQuery = { createdAt: 1 };
+  if (sortOption === "priceLowToHigh") {
     sortQuery = { price: 1 };
-  } else if (sortOption === 'priceHighToLow') {
+  } else if (sortOption === "priceHighToLow") {
     sortQuery = { price: -1 };
-  } else if (sortOption === 'lastAdded') {
+  } else if (sortOption === "lastAdded") {
     sortQuery = { createdAt: -1 };
   }
 
   let filter = {};
   if (searchQuery && searchQuery !== "") {
-    const regexPattern = searchQuery.split('').join('.*');
+    const regexPattern = searchQuery.split("").join(".*");
     filter = {
       $or: [
         { name: { $regex: regexPattern, $options: "i" } },
@@ -34,13 +34,13 @@ export const getProducts = asyncHandler(async (req, res) => {
         { category: { $regex: regexPattern, $options: "i" } },
       ],
     };
-  };
+  }
   const total = await Product.countDocuments(filter); // total number of products
   const products = await Product.find(filter)
     .sort(sortQuery)
     .skip(skip)
-    .limit(pageSize)
-
+    .limit(pageSize);
+  console.log(products);
   res.json({
     products,
     currentPage: page,
@@ -48,7 +48,6 @@ export const getProducts = asyncHandler(async (req, res) => {
     total,
   });
 });
-
 
 /**
  * Get a product by ID
@@ -128,8 +127,10 @@ export const updateProduct = asyncHandler(async (req, res) => {
     return res.status(404).json({ message: "Product not found" });
   }
 
-  if(product.vendor.toString() !== vendor.toString()) {
-    return res.status(401).json({ message: "You are not allowed to update this product" });
+  if (product.vendor.toString() !== vendor.toString()) {
+    return res
+      .status(401)
+      .json({ message: "You are not allowed to update this product" });
   }
 
   product.name = name || product.name;
@@ -152,12 +153,14 @@ export const updateProduct = asyncHandler(async (req, res) => {
 export const deleteProduct = asyncHandler(async (req, res) => {
   const product = await Product.findById(req.params.id);
   const vendorId = req.user._id.toString();
-  
+
   if (!product) {
     return res.status(404).json({ message: "Product not found" });
   }
   if (product.vendor.toString() !== vendorId) {
-    return res.status(401).json({ message: "You are not allowed to delete this product" });
+    return res
+      .status(401)
+      .json({ message: "You are not allowed to delete this product" });
   }
 
   const deleted = await Product.deleteOne({ _id: req.params.id });

@@ -19,7 +19,8 @@ export const ProductList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userInfo = useSelector((state) => state.auth.userInfo) || null;
-  const searchKeyword = useSelector((state) => state.product.searchKeyword) || "";
+  const searchKeyword =
+    useSelector((state) => state.product.searchKeyword) || "";
 
   const pageSize = 12;
   const { data, isLoading, error } = useGetProductsQuery(
@@ -44,7 +45,6 @@ export const ProductList = () => {
     dispatch(setPage(page));
     setCurrentPage(page);
   };
-
 
   return (
     <Container>
@@ -94,10 +94,10 @@ export const ProductList = () => {
               data?.products.map((product) => (
                 <Col key={product._id} xs={12} sm={6} md={4} lg={3}>
                   <Product product={product} />
+                  {console.log(product)}
                 </Col>
               ))
             )}
-          
           </Row>
           <Row className="justify-content-center justify-content-md-end mt-4">
             <Col xs={12} md={6}>
