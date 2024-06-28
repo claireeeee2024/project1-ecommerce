@@ -11,8 +11,8 @@ export const getProducts = asyncHandler(async (req, res) => {
   const page = parseInt(req.query.page) || 1; // Pagination, current page number
   const pageSize = parseInt(req.query.limit) || 10; //  number of products per page
   const skip = (page - 1) * pageSize; // number of products to skip
-  const total = await Product.countDocuments(); // total number of products
 
+  const searchQuery = req.query.keywords || "";
   const sortOption = req.query.sort || "createdAt";
 
   let sortQuery = { createdAt: 1 };
@@ -24,11 +24,23 @@ export const getProducts = asyncHandler(async (req, res) => {
     sortQuery = { createdAt: -1 };
   }
 
-  const products = await Product.find()
+  let filter = {};
+  if (searchQuery && searchQuery !== "") {
+    const regexPattern = searchQuery.split("").join(".*");
+    filter = {
+      $or: [
+        { name: { $regex: regexPattern, $options: "i" } },
+        { description: { $regex: regexPattern, $options: "i" } },
+        { category: { $regex: regexPattern, $options: "i" } },
+      ],
+    };
+  }
+  const total = await Product.countDocuments(filter); // total number of products
+  const products = await Product.find(filter)
     .sort(sortQuery)
     .skip(skip)
-    .limit(pageSize);
-
+    .limit(pageSize);;
+  // console.log(products);
   res.json({
     products,
     currentPage: page,
@@ -116,9 +128,11 @@ export const updateProduct = asyncHandler(async (req, res) => {
     return res.status(404).json({ message: "Product not found" });
   }
 
-  if (product.vendor.toString() !== vendor.toString()) {
+  if  (product.vendor.toString() !== vendor.toString()) {
     return res
+      
       .status(401)
+      
       .json({ message: "You are not allowed to update this product" });
   }
 
@@ -148,7 +162,9 @@ export const deleteProduct = asyncHandler(async (req, res) => {
   }
   if (product.vendor.toString() !== vendorId) {
     return res
+      
       .status(401)
+      
       .json({ message: "You are not allowed to delete this product" });
   }
 

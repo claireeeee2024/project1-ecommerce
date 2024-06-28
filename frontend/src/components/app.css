@@ -17,7 +17,11 @@
     display: flex;
     flex-direction: column;
   }
-  
+  @media (max-width: 992px) {
+    .cart-container {
+      width: 100%;
+    }
+  }
   .cart-header {
     display: flex;
     justify-content: space-between;
@@ -25,7 +29,7 @@
   }
 
   .cart-body {
-    flex: 1;
+    max-height: calc(100vh - 80px);
     overflow-y: auto; 
   }
   
@@ -49,4 +53,17 @@
     margin-top: 20px;
     text-align: left;
   }
+
+  /* .cart-items {
+    max-height: 50vh;
+    overflow-y: auto;
+  }
+  
+  .apply-discount {
+    margin-top: 20px;
+  }
+  
+  .totals {
+    margin-top: 20px;
+  } */
   
