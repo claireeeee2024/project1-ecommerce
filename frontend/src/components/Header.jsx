@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../slices/authSlice";
 import Message from "./Message";
 import { Button } from "react-bootstrap";
-import { setSearchKeyword } from "../slices/productSlice";
+import { setSearchKeyword , setPage} from "../slices/productSlice";
 import { Form } from "react-bootstrap";
 import { setCartItems } from "../slices/cartSlice";
 import React from "react";
@@ -78,8 +78,8 @@ const Header = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
+    dispatch(setPage(1));
     dispatch(setSearchKeyword(searchInput));
-    navigate("/");
   };
   return (
     <header>

@@ -8,6 +8,7 @@ import {
   useUploadProductImageMutation,
   useUpdateProductMutation,
   useGetProductByIdQuery,
+  useDeleteProductMutation,
 } from "../../slices/productApiSlice";
 import {
   validateName,
@@ -36,6 +37,8 @@ const ProductForm = () => {
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState(null);
 
+  const [deleteProduct, { isLoading: isDeleting, error: deleteError }] = useDeleteProductMutation();
+
   const [uploadProductImage, { isLoading: isUploading, error: uploadError }] =
     useUploadProductImageMutation();
   const [createProduct, { isLoading: isCreating, error: createError }] =
@@ -59,6 +62,24 @@ const ProductForm = () => {
       }
     }
   }, [product]);
+
+  // delete product
+  const handleDelete = async () => {
+    if (
+      window.confirm(
+        "Are you sure you want to delete this product?"
+      )
+    ) {
+      try {
+        await deleteProduct(productId).unwrap();
+        toast.success("Product deleted successfully!");
+        navigate(-1);
+      } catch (error) {
+        toast.error(error.data?.message || "Failed to delete product");
+      }
+    }
+  };
+  
 
   const onFileChange = (e) => {
     const file = e.target.files[0];
@@ -293,6 +314,18 @@ const ProductForm = () => {
                   ? "Update Product"
                   : "Add Product"}
               </Button>
+              {productId && (
+                <Button
+                  variant="danger"
+                  className="w-100 mt-3"
+                  onClick={handleDelete}
+                  disabled={isCreating || isUpdating || isUploading || isDeleting}
+                >
+                  {isCreating || isUploading || isUpdating || isDeleting
+                  ? "Processing..."
+                  : "Delete Product"}
+                </Button>
+              )}
             </Form>
           )}
         </Col>

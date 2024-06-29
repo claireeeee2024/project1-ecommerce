@@ -60,6 +60,7 @@ const Product = ({ product }) => {
       <Card.Img
         variant="top"
         src={`${BASE_URL}${product.images[0]}`}
+        style={{ width: '100%', height: '200px', objectFit: 'cover' }}
         className="product-image"
       />
       <Card.Body>
@@ -71,10 +72,10 @@ const Product = ({ product }) => {
         </Card.Text>
 
         <Card.Text className="product-category">{product.category}</Card.Text>
-        <div className="d-flex">
+        <div className="d-flex justify-content-between">
           {product.inStock > 0 && !data?.item?.qty ? (
-            <Button variant="primary" onClick={() => handleClick(product)}>
-              Add to Cart
+            <Button variant="primary"  className="flex-grow-1 mx-1"  onClick={() => handleClick(product)}>
+              Add
             </Button>
           ) : product.inStock > 0 ? (
             <div style={{ display: "flex", flex: 0.5 }}>
@@ -90,7 +91,7 @@ const Product = ({ product }) => {
                 value={data.item.qty}
                 onChange={(e) => handleChange(userInfo._id, product._id, e)}
               />
-              <Button
+              <Button className="mr-2"
                 onClick={() =>
                   debouncedHandleAdd(
                     userInfo._id,
@@ -109,9 +110,9 @@ const Product = ({ product }) => {
           {userInfo &&
           userInfo.isVendor === true &&
           userInfo._id.toString() === product.vendor.toString() ? (
-            <Link
+            <Link 
               to={`/products/edit/${product._id}`}
-              className="btn btn-primary ml-2"
+              className="btn btn-primary flex-grow-1 mx-1"
             >
               Edit product
             </Link>

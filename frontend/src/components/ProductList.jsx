@@ -10,19 +10,19 @@ import { setPage, setSortOption } from "../slices/productSlice";
 import Loader from "../components/Loader";
 
 export const ProductList = () => {
-  const [sortOption, setSortOption] = useState(
-    localStorage.getItem("sortOption") || "lastAdded"
-  ); //change to redux later
-  const [currentPage, setCurrentPage] = useState(
-    localStorage.getItem("page") || 1
-  );
+
+
+  const sortOption = useSelector((state) => state.product.sortOption) || "lastAdded" ;
+  const currentPage = useSelector((state) => state.product.page) || 1
+
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userInfo = useSelector((state) => state.auth.userInfo) || null;
   const searchKeyword =
     useSelector((state) => state.product.searchKeyword) || "";
 
-  const pageSize = 4;
+  const pageSize = 12;
   const { data, isLoading, error } = useGetProductsQuery(
     {
       page: currentPage,
@@ -33,19 +33,16 @@ export const ProductList = () => {
     { refetchOnMountOrArgChange: true }
   );
 
-  useEffect(() => {
-    localStorage.setItem("sortOption", sortOption);
-  }, [sortOption]);
-
-  useEffect(() => {
-    localStorage.setItem("page", currentPage);
-  }, [currentPage]);
 
   const handlePageChange = (page) => {
     dispatch(setPage(page));
-    setCurrentPage(page);
+    setPage(page);
   };
 
+  const handleSortChange = (sort) => {
+    dispatch(setSortOption(sort));
+    setSortOption(sort);
+  }
   return (
     <Container>
       <h2>Products : </h2>
@@ -56,7 +53,7 @@ export const ProductList = () => {
       ) : (
         <>
           <Row className="d-flex justify-content-end mb-3">
-            <Col xs={12} md={4}>
+            <Col xs={12} md={3} className="mb-2 mb-md-0 mx-1">
               <DropdownButton
                 id="sort-dropdown"
                 title={`Sort By: ${sortOption.replace(
@@ -65,20 +62,20 @@ export const ProductList = () => {
                 )}`}
                 variant="secondary"
               >
-                <Dropdown.Item onClick={() => setSortOption("lastAdded")}>
+                <Dropdown.Item onClick={() => handleSortChange("lastAdded")}>
                   Last Added
                 </Dropdown.Item>
-                <Dropdown.Item onClick={() => setSortOption("priceLowToHigh")}>
+                <Dropdown.Item onClick={() => handleSortChange("priceLowToHigh")}>
                   Price: Low to High
                 </Dropdown.Item>
-                <Dropdown.Item onClick={() => setSortOption("priceHighToLow")}>
+                <Dropdown.Item onClick={() => handleSortChange("priceHighToLow")}>
                   Price: High to Low
                 </Dropdown.Item>
               </DropdownButton>
             </Col>
-            <Col xs={12} md={2}>
+            <Col xs={12} md={3} className="mx-1">
               {userInfo && userInfo.isVendor === true ? (
-                <Button
+                <Button 
                   variant="primary"
                   onClick={() => navigate("/products/add")} //navigate to add product page
                 >
@@ -87,19 +84,19 @@ export const ProductList = () => {
               ) : null}
             </Col>
           </Row>
-          <Row>
+          <Row noGutters>
             {data?.products.length === 0 ? (
               <h2>No products found</h2>
             ) : (
               data?.products.map((product) => (
-                <Col key={product._id} xs={12} sm={6} md={4} lg={3}>
+                <Col key={product._id} xs={12} sm={8} md={6} lg={4} xl={3} className="mb-2">
                   <Product product={product} />
                 </Col>
               ))
             )}
           </Row>
           <Row className="justify-content-center justify-content-md-end mt-4">
-            <Col xs={12} md={6}>
+            <Col xs={12} md={7}>
               <Pagination
                 currentPage={currentPage}
                 totalPages={data?.pages}

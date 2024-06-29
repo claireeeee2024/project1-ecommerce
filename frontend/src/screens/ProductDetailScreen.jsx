@@ -22,7 +22,7 @@ const ProductDetailScreen = () => {
   console.log(id);
   const { data: product, error, isLoading } = useGetProductByIdQuery(id);
 
-  const { userInfo } = useSelector((state) => state.auth);
+  const  userInfo  = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const [createCartItem] = useCreateCartItemMutation();
   const [updateCartItem] = useUpdateCartItemMutation();
@@ -79,6 +79,17 @@ const ProductDetailScreen = () => {
   return (
     <Container>
       <h2 className="my-3">Product Detail</h2>
+      <Row>
+        <Col>
+        <Button 
+        variant='outline-primary' 
+        xs = {1}
+        onClick={() => navigate("/products")}>
+          Go Back
+          </Button>
+        </Col>
+       
+      </Row>
       <Row className="bg-white py-3 my-auto">
         <Col md={6} className="px-3">
           <img
