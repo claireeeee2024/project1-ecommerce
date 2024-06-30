@@ -3,30 +3,27 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Loader from "../components/Loader";
 import { useGetProductByIdQuery } from "../slices/productApiSlice";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
   useCreateCartItemMutation,
-  useUpdateCartItemMutation,
-  useDeleteCartItemMutation,
   useGetItemQuery,
-} from "../slices/cartSlice";
-import { FormControl, Card } from "react-bootstrap";
+} from "../slices/cartApiSlice";
+import { Form, Card } from "react-bootstrap";
 import { useCartOperation } from "../utils/changeCartItems";
 import { BASE_URL } from "../constants";
+import { setQtys, setTotal } from "../slices/cartSlice";
+import { Link } from "react-router-dom";
 
 const ProductDetailScreen = () => {
   const { id } = useParams();
-  const [img, setImg] = useState(null);
 
   console.log(id);
   const { data: product, error, isLoading } = useGetProductByIdQuery(id);
 
-  const  userInfo  = useSelector((state) => state.auth);
+  const { userInfo } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const [createCartItem] = useCreateCartItemMutation();
-  const [updateCartItem] = useUpdateCartItemMutation();
-  const [deleteCartItem] = useDeleteCartItemMutation();
   const { data } = useGetItemQuery(
     {
       userId: userInfo._id,
@@ -35,18 +32,12 @@ const ProductDetailScreen = () => {
     { skip: !userInfo }
   );
 
-  // console.log(product);
-  //   useEffect(() => {
-  //     setImg("/" + product?.images[0]);
-  //   }, [product]);
+  const { handleChange, debouncedHandleAdd, debouncedHandleMinus } =
+    useCartOperation();
 
-  const {
-    handleAdd,
-    handleMinus,
-    handleChange,
-    debouncedHandleAdd,
-    debouncedHandleMinus,
-  } = useCartOperation();
+  const qtys = useSelector((state) => state.cart.qtys);
+  const total = useSelector((state) => state.cart.total);
+  const dispatch = useDispatch();
 
   const handleClick = async (newItem) => {
     if (!userInfo) {
@@ -66,6 +57,8 @@ const ProductDetailScreen = () => {
           id: newItem._id,
         },
       }).unwrap();
+      dispatch(setQtys(qtys + 1));
+      dispatch(setTotal(total + newItem.price));
       console.log(`Item with id ${newItem._id} is added`);
     } catch (error) {
       console.error(error);
@@ -81,14 +74,14 @@ const ProductDetailScreen = () => {
       <h2 className="my-3">Product Detail</h2>
       <Row>
         <Col>
-        <Button 
-        variant='outline-primary' 
-        xs = {1}
-        onClick={() => navigate("/products")}>
-          Go Back
+          <Button
+            variant="outline-primary"
+            xs={1}
+            onClick={() => navigate("/products")}
+          >
+            Go Back
           </Button>
         </Col>
-       
       </Row>
       <Row className="bg-white py-3 my-auto">
         <Col md={6} className="px-3">
@@ -109,45 +102,43 @@ const ProductDetailScreen = () => {
                 Add to Cart
               </Button>
             ) : product.inStock > 0 ? (
-              <div style={{ display: "flex", flex: 0.2 }}>
+              <div className="d-flex ">
                 <Button
                   onClick={() =>
-                    debouncedHandleMinus(
-                      userInfo._id,
-                      product._id,
-                      data.item.qty
-                    )
+                    debouncedHandleMinus(userInfo._id, product, data.item.qty)
                   }
                 >
                   -
                 </Button>
-                <FormControl
+                <Form.Control
                   type="text"
+                  className="text-center mx-2"
                   value={data.item.qty}
-                  onChange={(e) => handleChange(userInfo._id, product._id, e)}
+                  onChange={(e) => handleChange(userInfo._id, product, e)}
                 />
                 <Button
                   onClick={() =>
-                    debouncedHandleAdd(
-                      userInfo._id,
-                      product._id,
-                      data.item.qty,
-                      product.inStock
-                    )
+                    debouncedHandleAdd(userInfo._id, product, data.item.qty)
                   }
                 >
                   +
                 </Button>
               </div>
             ) : (
-              <Card.Subtitle>Out of Stock</Card.Subtitle>
+              <Card.Subtitle className="text-danger">
+                Out of Stock
+              </Card.Subtitle>
             )}
+
             {userInfo &&
             userInfo.isVendor === true &&
             userInfo._id.toString() === product.vendor.toString() ? (
-              <Button variant="primary" className="mr-2">
+              <Link
+                to={`/products/edit/${product._id}`}
+                className="btn btn-primary flex-grow-1 mx-1"
+              >
                 Edit product
-              </Button>
+              </Link>
             ) : null}
           </div>
           {/* <div className="d-flex flex-md-row justify-content-between">

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { useGetCartsQuery } from "../slices/cartSlice";
+import { useGetCartsQuery } from "../slices/cartApiSlice";
 import { useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { FormControl, Button } from "react-bootstrap";
 import "./app.css";
 import { useCartOperation } from "../utils/changeCartItems";
 import { BASE_URL } from "../constants";
+import { setQtys, setTotal } from "../slices/cartSlice";
+
 const Cart = ({ onClose }) => {
   const userId = useSelector((state) => state.auth.userInfo._id) || null;
   const { data, error, isLoading } = useGetCartsQuery({
@@ -14,7 +16,36 @@ const Cart = ({ onClose }) => {
   console.log(data);
 
   const [input, setInput] = useState("");
-  const [discount, setDiscount] = useState(10);
+
+  const [discount, setDiscount] = useState(() => {
+    // 尝试从localStorage中读取存储的discount值
+    const savedDiscount = localStorage.getItem("discount");
+    return savedDiscount !== null ? JSON.parse(savedDiscount) : 10;
+  });
+  const taxRate = 0.1;
+  const dispatch = useDispatch();
+
+  const { qtys, subtotal, tax, total } = useMemo(() => {
+    const qtys = data?.cartItems?.reduce((pre, cur) => pre + cur.qty, 0);
+    dispatch(setQtys(qtys));
+    const subtotal = data?.cartItems?.reduce(
+      (pre, cur) => pre + cur.price * cur.qty,
+      0
+    );
+    const tax = subtotal * taxRate;
+    let total = subtotal + tax - discount;
+    total = total > 0 ? total : 0;
+    dispatch(setTotal(total));
+    return { qtys, subtotal, tax, total };
+  }, [data, discount]);
+  //   const [discount, setDiscount] = useState(10);
+
+  // 当discount变化时，将其保存到localStorage
+  useEffect(() => {
+    localStorage.setItem("discount", JSON.stringify(discount));
+    localStorage.setItem("qtys", JSON.stringify(qtys));
+    localStorage.setItem("total", JSON.stringify(total));
+  }, [discount, qtys, total]);
 
   const handleApply = () => {
     const coupon = parseInt(input);
@@ -37,26 +68,11 @@ const Cart = ({ onClose }) => {
   };
 
   const {
-    handleAdd,
-    handleMinus,
     handleCheckout,
     handleRemove,
     debouncedHandleAdd,
     debouncedHandleMinus,
   } = useCartOperation();
-
-  const taxRate = 0.1;
-
-  const { qtys, subtotal, tax, total } = useMemo(() => {
-    const qtys = data?.cartItems?.reduce((pre, cur) => pre + cur.qty, 0);
-    const subtotal = data?.cartItems?.reduce(
-      (pre, cur) => pre + cur.price * cur.qty,
-      0
-    );
-    const tax = subtotal * taxRate;
-    const total = subtotal + tax - discount;
-    return { qtys, subtotal, tax, total };
-  }, [data]);
 
   return (
     <>
@@ -101,7 +117,11 @@ const Cart = ({ onClose }) => {
                           <div className="col-8 d-flex justify-content-between align-items-center">
                             <Button
                               onClick={() =>
-                                debouncedHandleMinus(userId, item.id, item.qty)
+                                debouncedHandleMinus(
+                                  userId,
+                                  { _id: item.id, price: item.price },
+                                  item.qty
+                                )
                               }
                             >
                               -
@@ -113,7 +133,11 @@ const Cart = ({ onClose }) => {
                             />
                             <Button
                               onClick={() =>
-                                debouncedHandleAdd(userId, item.id, item.qty)
+                                debouncedHandleAdd(
+                                  userId,
+                                  { _id: item.id, price: item.price },
+                                  item.qty
+                                )
                               }
                             >
                               +

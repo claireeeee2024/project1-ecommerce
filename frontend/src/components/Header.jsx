@@ -4,14 +4,14 @@ import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../slices/authSlice";
 import Message from "./Message";
 import { Button } from "react-bootstrap";
-import { setSearchKeyword , setPage} from "../slices/productSlice";
+import { setSearchKeyword, setPage } from "../slices/productSlice";
 import { Form } from "react-bootstrap";
-import { setCartItems } from "../slices/cartSlice";
+import { setCartItems } from "../slices/cartApiSlice";
 import React from "react";
 import { useState, useEffect } from "react";
 import { PiShoppingCart } from "react-icons/pi";
 import { FaShoppingCart, FaSearch } from "react-icons/fa";
-import { useGetCartsQuery } from "../slices/cartSlice";
+import { useGetCartsQuery } from "../slices/cartApiSlice";
 import { useMemo } from "react";
 import Cart from "./Cart";
 import { toast } from "react-toastify";
@@ -31,20 +31,8 @@ const Header = () => {
     { skip: !userId }
   );
 
-  const discount = 10;
-  const taxRate = 0.1;
-  const { qtys, subtotal, tax, total } = useMemo(() => {
-    const qtys = data?.cartItems?.reduce((pre, cur) => pre + cur.qty, 0);
-    const subtotal = data?.cartItems?.reduce(
-      (pre, cur) => pre + cur.price * cur.qty,
-      0
-    );
-    const tax = subtotal * taxRate;
-    let total = subtotal + tax - discount;
-    total = total < 0 ? 0 : total;
-    if (isNaN(total)) total = 0;
-    return { qtys, subtotal, tax, total };
-  }, [data]);
+  const qtys = useSelector((state) => state.cart.qtys) || 0;
+  const total = useSelector((state) => state.cart.total) || 0;
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -141,10 +129,14 @@ const Header = () => {
                   onClick={handleClick}
                 >
                   <PiShoppingCart style={{ color: "white" }} />
-                  {qtys > 0 && (
+                  {userInfo && qtys > 0 && (
                     <span className="badge badge-custom">{qtys}</span>
                   )}
-                  <span>${total.toFixed(2) || 0}</span>
+                  {userInfo ? (
+                    <span>${total > 0 ? total.toFixed(2) : "0.00"}</span>
+                  ) : (
+                    <span> $0.00</span>
+                  )}
                 </button>
                 {cartVisible && <Cart onClose={handleClose} />}
               </li>
