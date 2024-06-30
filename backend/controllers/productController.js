@@ -39,7 +39,7 @@ export const getProducts = asyncHandler(async (req, res) => {
   const products = await Product.find(filter)
     .sort(sortQuery)
     .skip(skip)
-    .limit(pageSize);;
+    .limit(pageSize);
   // console.log(products);
   res.json({
     products,
@@ -122,28 +122,29 @@ export const updateProduct = asyncHandler(async (req, res) => {
   const { name, description, category, price, inStock, images, vendor } =
     req.body;
   const product = await Product.findById(req.params.id);
-
+  console.log(name, description, category, price, inStock, images, vendor);
   //check product exists
   if (!product) {
     return res.status(404).json({ message: "Product not found" });
   }
 
-  if  (product.vendor.toString() !== vendor.toString()) {
+  if (product.vendor.toString() !== vendor.toString()) {
     return res
-      
+
       .status(401)
-      
+
       .json({ message: "You are not allowed to update this product" });
   }
 
   product.name = name || product.name;
   product.description = description || product.description;
   product.category = category || product.category;
-  product.price = Number(price) || product.price;
-  product.inStock = Number(inStock) || product.inStock;
+  product.price = price || product.price;
+  product.inStock = inStock || product.inStock;
   product.images = images || product.images;
 
   const updatedProduct = await product.save();
+  console.log(product);
   res.json(updatedProduct);
 });
 
@@ -162,9 +163,9 @@ export const deleteProduct = asyncHandler(async (req, res) => {
   }
   if (product.vendor.toString() !== vendorId) {
     return res
-      
+
       .status(401)
-      
+
       .json({ message: "You are not allowed to delete this product" });
   }
 

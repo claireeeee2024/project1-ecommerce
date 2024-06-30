@@ -34,7 +34,6 @@ const ProductForm = () => {
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});
-  const [message, setMessage] = useState(null);
 
   const [uploadProductImage, { isLoading: isUploading, error: uploadError }] =
     useUploadProductImageMutation();
@@ -48,6 +47,14 @@ const ProductForm = () => {
   const [updateProduct, { isLoading: isUpdating }] = useUpdateProductMutation();
 
   const navigate = useNavigate();
+
+  const categoryOptions = [
+    "Macbook",
+    "iPhone",
+    "iPad",
+    "Airpods",
+    "Accessories",
+  ];
 
   useEffect(() => {
     if (product) {
@@ -110,7 +117,7 @@ const ProductForm = () => {
   };
   const onSubmit = async (e) => {
     e.preventDefault();
-    console.log(imagePreview);
+    // console.log(imagePreview);
     const { name, description, category, price, inStock } = formValues;
     const formErrors = {
       name: validateName(name),
@@ -207,12 +214,26 @@ const ProductForm = () => {
                   <Form.Group controlId="category" className="mb-3">
                     <Form.Label>Category</Form.Label>
                     <Form.Control
+                      as="select"
+                      name="category"
+                      onChange={handleInputChange}
+                      value={formValues.category}
+                      isInvalid={!!errors.category}
+                    >
+                      <option>Choose a category</option>
+                      {categoryOptions.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </Form.Control>
+                    {/* <Form.Control
                       type="text"
                       name="category"
                       value={formValues.category}
                       onChange={handleInputChange}
                       isInvalid={!!errors.category}
-                    />
+                    /> */}
                     <Form.Control.Feedback type="invalid">
                       {errors.category}
                     </Form.Control.Feedback>

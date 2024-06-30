@@ -10,7 +10,7 @@ export const getCartItems = asyncHandler(async (req, res) => {
   const cart = await Cart.findOne({
     user: new mongoose.Types.ObjectId(req.params.id),
   });
-  console.log("cart: ", cart);
+  // console.log("cart: ", cart);
   if (!cart) {
     const newCart = new Cart({ user: req.params.id, cartItems: [] });
     await newCart.save();

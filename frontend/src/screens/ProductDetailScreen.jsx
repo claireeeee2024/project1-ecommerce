@@ -18,8 +18,6 @@ import { BASE_URL } from "../constants";
 const ProductDetailScreen = () => {
   const { id } = useParams();
   const [img, setImg] = useState(null);
-
-  console.log(id);
   const { data: product, error, isLoading } = useGetProductByIdQuery(id);
 
   const { userInfo } = useSelector((state) => state.auth);

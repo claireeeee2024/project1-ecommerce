@@ -34,7 +34,7 @@ const router = createBrowserRouter(
       <Route path="/sent-reset-email" element={<SentResetEmailScreen />} />
       <Route path="/checkout" element={<CheckoutScreen />} />
       <Route path="/products/:id" element={<ProductDetailScreen />} />
-
+      
       <Route path="/" element={<VendorRoute />}>
         <Route path="/products/add" element={<ProductForm />} />
         <Route path="/products/edit/:id" element={<ProductForm />} />
