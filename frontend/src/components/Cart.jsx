@@ -35,12 +35,12 @@ const Cart = ({ onClose }) => {
     const tax = subtotal * taxRate;
     let total = subtotal + tax - discount;
     total = total > 0 ? total : 0;
-    dispatch(setTotal(total));
+    dispatch(setTotal(subtotal));
     return { qtys, subtotal, tax, total };
-  }, [data, discount]);
+  }, [data, discount, dispatch]);
   //   const [discount, setDiscount] = useState(10);
 
-  // 当discount变化时，将其保存到localStorage
+  // 当变化时，将其保存到localStorage
   useEffect(() => {
     localStorage.setItem("discount", JSON.stringify(discount));
     localStorage.setItem("qtys", JSON.stringify(qtys));
