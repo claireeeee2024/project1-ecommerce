@@ -10,11 +10,9 @@ import { setPage, setSortOption } from "../slices/productSlice";
 import Loader from "../components/Loader";
 
 export const ProductList = () => {
-
-
-  const sortOption = useSelector((state) => state.product.sortOption) || "lastAdded" ;
-  const currentPage = useSelector((state) => state.product.page) || 1
-
+  const sortOption =
+    useSelector((state) => state.product.sortOption) || "lastAdded";
+  const currentPage = useSelector((state) => state.product.page) || 1;
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -22,7 +20,7 @@ export const ProductList = () => {
   const searchKeyword =
     useSelector((state) => state.product.searchKeyword) || "";
 
-  const pageSize = 12;
+  const pageSize = 4;
   const { data, isLoading, error } = useGetProductsQuery(
     {
       page: currentPage,
@@ -33,7 +31,6 @@ export const ProductList = () => {
     { refetchOnMountOrArgChange: true }
   );
 
-
   const handlePageChange = (page) => {
     dispatch(setPage(page));
     setPage(page);
@@ -42,7 +39,7 @@ export const ProductList = () => {
   const handleSortChange = (sort) => {
     dispatch(setSortOption(sort));
     setSortOption(sort);
-  }
+  };
   return (
     <Container>
       <h2>Products : </h2>
@@ -65,17 +62,21 @@ export const ProductList = () => {
                 <Dropdown.Item onClick={() => handleSortChange("lastAdded")}>
                   Last Added
                 </Dropdown.Item>
-                <Dropdown.Item onClick={() => handleSortChange("priceLowToHigh")}>
+                <Dropdown.Item
+                  onClick={() => handleSortChange("priceLowToHigh")}
+                >
                   Price: Low to High
                 </Dropdown.Item>
-                <Dropdown.Item onClick={() => handleSortChange("priceHighToLow")}>
+                <Dropdown.Item
+                  onClick={() => handleSortChange("priceHighToLow")}
+                >
                   Price: High to Low
                 </Dropdown.Item>
               </DropdownButton>
             </Col>
             <Col xs={12} md={3} className="mx-1">
               {userInfo && userInfo.isVendor === true ? (
-                <Button 
+                <Button
                   variant="primary"
                   onClick={() => navigate("/products/add")} //navigate to add product page
                 >
@@ -84,12 +85,20 @@ export const ProductList = () => {
               ) : null}
             </Col>
           </Row>
-          <Row noGutters>
+          <Row>
             {data?.products.length === 0 ? (
               <h2>No products found</h2>
             ) : (
               data?.products.map((product) => (
-                <Col key={product._id} xs={12} sm={8} md={6} lg={4} xl={3} className="mb-2">
+                <Col
+                  key={product._id}
+                  xs={12}
+                  sm={8}
+                  md={6}
+                  lg={4}
+                  xl={3}
+                  className="mb-2"
+                >
                   <Product product={product} />
                 </Col>
               ))

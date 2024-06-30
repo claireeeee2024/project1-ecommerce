@@ -36,7 +36,8 @@ const ProductForm = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});
 
-  const [deleteProduct, { isLoading: isDeleting, error: deleteError }] = useDeleteProductMutation();
+  const [deleteProduct, { isLoading: isDeleting, error: deleteError }] =
+    useDeleteProductMutation();
 
   const [uploadProductImage, { isLoading: isUploading, error: uploadError }] =
     useUploadProductImageMutation();
@@ -68,15 +69,11 @@ const ProductForm = () => {
         setImagePreview(`${BASE_URL}${images[0]}`);
       }
     }
-  }, [product]);
+  }, [product, navigate]);
 
   // delete product
   const handleDelete = async () => {
-    if (
-      window.confirm(
-        "Are you sure you want to delete this product?"
-      )
-    ) {
+    if (window.confirm("Are you sure you want to delete this product?")) {
       try {
         await deleteProduct(productId).unwrap();
         toast.success("Product deleted successfully!");
@@ -86,7 +83,6 @@ const ProductForm = () => {
       }
     }
   };
-  
 
   const onFileChange = (e) => {
     const file = e.target.files[0];
@@ -340,11 +336,13 @@ const ProductForm = () => {
                   variant="danger"
                   className="w-100 mt-3"
                   onClick={handleDelete}
-                  disabled={isCreating || isUpdating || isUploading || isDeleting}
+                  disabled={
+                    isCreating || isUpdating || isUploading || isDeleting
+                  }
                 >
                   {isCreating || isUploading || isUpdating || isDeleting
-                  ? "Processing..."
-                  : "Delete Product"}
+                    ? "Processing..."
+                    : "Delete Product"}
                 </Button>
               )}
             </Form>
