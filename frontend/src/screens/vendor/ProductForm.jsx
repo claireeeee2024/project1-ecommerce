@@ -77,7 +77,7 @@ const ProductForm = () => {
       try {
         await deleteProduct(productId).unwrap();
         toast.success("Product deleted successfully!");
-        navigate(-1);
+        navigate("/");
       } catch (error) {
         toast.error(error.data?.message || "Failed to delete product");
       }

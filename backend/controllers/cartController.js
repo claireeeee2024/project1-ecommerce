@@ -1,4 +1,5 @@
 import Cart from "../models/cartModel.js";
+import Product from "../models/product.js";
 import asyncHandler from "../middleware/asyncHandler.js";
 import mongoose from "mongoose";
 
@@ -16,7 +17,25 @@ export const getCartItems = asyncHandler(async (req, res) => {
     await newCart.save();
     return res.status(200).json({ cartItems: newCart.cartItems });
   }
-  res.status(200).json({ cartItems: cart.cartItems });
+
+  const products = await Product.find();
+  let cartItems = cart.cartItems;
+  const result = cartItems
+    .map((item) => {
+      const product = products.find((product) =>
+        product._id.equals(new mongoose.Types.ObjectId(item.id))
+      );
+      if (product) {
+        return {
+          ...item.toObject(),
+          price: product.price,
+        };
+      }
+      return null;
+    })
+    .filter((item) => item !== null);
+  console.log("result", result);
+  res.status(200).json({ cartItems: result });
 });
 
 // @desc    Get cart item bu id
