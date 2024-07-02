@@ -6,8 +6,6 @@ const initialState = {
     searchKeyword: "",
 };
 
-
-
 const productSlice = createSlice({
     name: "product",
     initialState,

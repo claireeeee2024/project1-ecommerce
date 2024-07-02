@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Form, Button, Container, Card } from "react-bootstrap";
+import { Row, Col, Form, Button, Container, Card } from "react-bootstrap";
 import { validatePassword, validateEmail } from "../utils/validation";
 export const EmailField = ({ email, setEmail, errors, setErrors }) => {
   const handleChange = (e) => {
@@ -71,8 +71,8 @@ const AuthForm = ({
 
   return (
     <Container>
-      <div className="row py-lg-3">
-        <div className="col-lg-5 col-md-8 mx-auto">
+      <Row className="py-lg-3">
+        <Col lg={5} sm={12} className="mx-auto">
           <Card className="shadow-lg mt-3">
             <Card.Body className="mt-4 mx-3">
               <Form onSubmit={submitHandler}>
@@ -115,7 +115,7 @@ const AuthForm = ({
                         {mode === "update-password" && "Update Password"}
                       </Button>
                     </div>
-                    <div className="row mt-3 mb-5">
+                    <Row className="mt-3 mb-5">
                       <small className="col-12 col-md-6 d-flex justify-content-md-start justify-content-center mb-2 mb-md-0">
                         {mode === "login" && (
                           <>
@@ -145,11 +145,11 @@ const AuthForm = ({
                           </a>
                         </small>
                       )}
-                    </div>
+                    </Row>
                   </>
                 ) : (
-                  <div className="row justify-content-center">
-                    <div className="col my-4 mx-4 text-center">
+                  <Row className="justify-content-center">
+                    <Col className="my-4 mx-4 text-center">
                       <i
                         className="bi bi-envelope-check"
                         style={{ fontSize: "100px" }}
@@ -158,14 +158,14 @@ const AuthForm = ({
                         We have sent the update password link to your email,
                         please check that!
                       </p>
-                    </div>
-                  </div>
+                    </Col>
+                  </Row>
                 )}
               </Form>
             </Card.Body>
           </Card>
-        </div>
-      </div>
+        </Col>
+      </Row>
     </Container>
   );
 };

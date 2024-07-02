@@ -5,10 +5,12 @@ import { useSelector } from "react-redux";
 import {
   useCreateCartItemMutation,
   useGetItemQuery,
-} from "../slices/cartSlice";
+} from "../slices/cartApiSlice";
 import "./Product.css";
 import { useCartOperation } from "../utils/changeCartItems";
 import { BASE_URL } from "../constants";
+import { useDispatch } from "react-redux";
+import { setQtys, setTotal } from "../slices/cartSlice";
 
 const Product = ({ product }) => {
   const userInfo = useSelector((state) => state.auth.userInfo) || null;
@@ -22,14 +24,12 @@ const Product = ({ product }) => {
     { skip: !userInfo }
   );
   // console.log(data);
+  const qtys = useSelector((state) => state.cart.qtys);
+  const total = useSelector((state) => state.cart.total);
+  const dispatch = useDispatch();
 
-  const {
-    handleAdd,
-    handleMinus,
-    handleChange,
-    debouncedHandleAdd,
-    debouncedHandleMinus,
-  } = useCartOperation();
+  const { handleChange, debouncedHandleAdd, debouncedHandleMinus } =
+    useCartOperation();
 
   const handleClick = async (newItem) => {
     if (!userInfo) {
@@ -49,6 +49,8 @@ const Product = ({ product }) => {
           id: newItem._id,
         },
       }).unwrap();
+      dispatch(setQtys(qtys + 1));
+      dispatch(setTotal(total + newItem.price));
       console.log(`Item with id ${newItem._id} is added`);
     } catch (error) {
       console.error(error);
@@ -60,7 +62,7 @@ const Product = ({ product }) => {
       <Card.Img
         variant="top"
         src={`${BASE_URL}${product.images[0]}`}
-        style={{ width: '90%', height: '200px', objectFit: 'contain' }}
+        style={{ width: "100%", height: "200px", objectFit: "contain" }}
         className="product-image"
       />
       <Card.Body>
@@ -73,15 +75,19 @@ const Product = ({ product }) => {
 
         <Card.Text className="product-category">{product.category}</Card.Text>
         <div className="d-flex justify-content-between">
-          {product.inStock > 0 && !data?.item?.qty ? (
-            <Button variant="primary"  className="flex-grow-1 mx-1"  onClick={() => handleClick(product)}>
+          {(product.inStock > 0 && !data?.item?.qty) || !userInfo ? (
+            <Button
+              variant="primary"
+              className="flex-grow-1 mx-1"
+              onClick={() => handleClick(product)}
+            >
               Add
             </Button>
           ) : product.inStock > 0 ? (
-            <div style={{ display: "flex", flex: 0.5 }}>
+            <div style={{ display: "flex", flex: 1 }}>
               <Button
                 onClick={() =>
-                  debouncedHandleMinus(userInfo._id, product._id, data.item.qty)
+                  debouncedHandleMinus(userInfo._id, product, data.item.qty)
                 }
               >
                 -
@@ -89,16 +95,12 @@ const Product = ({ product }) => {
               <Form.Control
                 type="text"
                 value={data.item.qty}
-                onChange={(e) => handleChange(userInfo._id, product._id, e)}
+                onChange={(e) => handleChange(userInfo._id, product, e)}
               />
-              <Button className="mr-2"
+              <Button
+                className="mr-2"
                 onClick={() =>
-                  debouncedHandleAdd(
-                    userInfo._id,
-                    product._id,
-                    data.item.qty,
-                    product.inStock
-                  )
+                  debouncedHandleAdd(userInfo._id, product, data.item.qty)
                 }
               >
                 +
@@ -110,9 +112,9 @@ const Product = ({ product }) => {
           {userInfo &&
           userInfo.isVendor === true &&
           userInfo._id.toString() === product.vendor.toString() ? (
-            <Link 
+            <Link
               to={`/products/edit/${product._id}`}
-              className="btn btn-primary flex-grow-1 mx-1"
+              className="btn btn-primary mx-1"
             >
               Edit product
             </Link>
