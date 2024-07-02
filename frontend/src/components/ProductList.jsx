@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useGetProductsQuery } from "../slices/productApiSlice";
 import Product from "../components/Product";
 import Pagination from "../components/Pagination";
-import { Container, Row, Col, Form } from "react-bootstrap";
+import { Container, Row, Col, Card } from "react-bootstrap";
 import { Dropdown, DropdownButton, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,7 +20,7 @@ export const ProductList = () => {
   const searchKeyword =
     useSelector((state) => state.product.searchKeyword) || "";
 
-  const pageSize = 4;
+  const pageSize = 12;
   const { data, isLoading, error } = useGetProductsQuery(
     {
       page: currentPage,
@@ -86,6 +86,7 @@ export const ProductList = () => {
             </Col>
           </Row>
           <Row>
+            
             {data?.products.length === 0 ? (
               <h2>No products found</h2>
             ) : (
@@ -105,7 +106,7 @@ export const ProductList = () => {
             )}
           </Row>
           <Row className="justify-content-center justify-content-md-end mt-4">
-            <Col xs={12} md={7}>
+            <Col xs={12} md={2}>
               <Pagination
                 currentPage={currentPage}
                 totalPages={data?.pages}

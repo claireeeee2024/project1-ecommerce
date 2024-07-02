@@ -68,6 +68,7 @@ const Header = () => {
     e.preventDefault();
     dispatch(setPage(1));
     dispatch(setSearchKeyword(searchInput));
+    navigate("/");
   };
   return (
     <header>

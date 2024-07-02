@@ -57,6 +57,9 @@ productSchema.pre('save', function(next) {
     next();
   });
 
+
+productSchema.index({ name: 'text', description: 'text', category: 'text' });
+
 const Product = mongoose.model('Product', productSchema);
 
 export default Product;
