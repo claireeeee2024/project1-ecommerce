@@ -26,7 +26,6 @@ const VendorRoute = () => {
 
   return <Outlet />;
 
-  return <Outlet />;
 };
 
 export default VendorRoute;
