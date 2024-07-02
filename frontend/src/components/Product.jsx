@@ -60,7 +60,7 @@ const Product = ({ product }) => {
       <Card.Img
         variant="top"
         src={`${BASE_URL}${product.images[0]}`}
-        style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+        style={{ width: '90%', height: '200px', objectFit: 'contain' }}
         className="product-image"
       />
       <Card.Body>
