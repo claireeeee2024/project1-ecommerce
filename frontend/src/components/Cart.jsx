@@ -38,7 +38,6 @@ const Cart = ({ onClose }) => {
     dispatch(setTotal(subtotal));
     return { qtys, subtotal, tax, total };
   }, [data, discount, dispatch]);
-  //   const [discount, setDiscount] = useState(10);
 
   // 当变化时，将其保存到localStorage
   useEffect(() => {
@@ -99,65 +98,75 @@ const Cart = ({ onClose }) => {
           ) : (
             <div className="p-5 cart-body">
               <div className="cart-items">
-                {data.cartItems
-                  ?.filter((item) => item.qty > 0)
-                  .map((item) => (
-                    <div key={item._id} className="row py-3">
-                      <img
-                        src={`${BASE_URL}${item.image}`}
-                        alt="..."
-                        className="col-4"
-                      />
-                      <div className="col-8">
-                        <div className="row">
-                          <h5 className="col-8">{item.name}</h5>
-                          <p className="col-4">${item.price}</p>
-                        </div>
-                        <div className="row">
-                          {item.qty > 0 ? (
-                            <div className="col-8 d-flex justify-content-between align-items-center">
-                              <Button
-                                onClick={() =>
-                                  debouncedHandleMinus(
-                                    userId,
-                                    { _id: item.id, price: item.price },
-                                    item.qty
-                                  )
-                                }
-                              >
-                                -
-                              </Button>
-                              <FormControl
-                                type="text"
-                                value={item.qty}
-                                readOnly
-                              />
-                              <Button
-                                onClick={() =>
-                                  debouncedHandleAdd(
-                                    userId,
-                                    { _id: item.id, price: item.price },
-                                    item.qty
-                                  )
-                                }
-                              >
-                                +
-                              </Button>
-                            </div>
-                          ) : (
-                            <div>Out of stock</div>
-                          )}
+                {data.cartItems?.map((item) => (
+                  <div key={item._id} className="row py-3">
+                    <img
+                      src={`${BASE_URL}${item.image}`}
+                      alt="..."
+                      className="col-4"
+                    />
+                    <div className="col-8">
+                      <div className="row">
+                        <h5 className="col-8">{item.name}</h5>
+                        <p className="col-4">${item.price}</p>
+                      </div>
+                      <div className="row">
+                        {item.qty > 0 ? (
+                          <div className="col-8 d-flex justify-content-between align-items-center">
+                            <Button
+                              onClick={() =>
+                                debouncedHandleMinus(
+                                  userId,
+                                  { _id: item.id, price: item.price },
+                                  item.qty
+                                )
+                              }
+                            >
+                              -
+                            </Button>
+                            <FormControl
+                              type="text"
+                              value={item.qty}
+                              readOnly
+                            />
+                            <Button
+                              onClick={() =>
+                                debouncedHandleAdd(
+                                  userId,
+                                  {
+                                    _id: item.id,
+                                    price: item.price,
+                                    inStock: item.inStock,
+                                  },
+                                  item.qty
+                                )
+                              }
+                            >
+                              +
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="col-8 d-flex justify-content-between align-items-center">
+                            <Button
+                              variant="secondary"
+                              style={{ fontSize: "13px" }}
+                              className=" mx-1"
+                            >
+                              Out of Stock
+                            </Button>
+                          </div>
+                        )}
 
-                          <Button
-                            className="nav-link active btn btn-link col-4 "
-                            onClick={() => handleRemove(userId, item.id)}
-                          >
-                            Remove
-                          </Button>
-                        </div>
+                        <Button
+                          className="nav-link active btn btn-link col-4 "
+                          onClick={() => handleRemove(userId, item.id)}
+                        >
+                          Remove
+                        </Button>
                       </div>
                     </div>
-                  ))}
+                  </div>
+                ))}
               </div>
               <div className="apply-discount my-3">
                 <p>Apply discount code</p>

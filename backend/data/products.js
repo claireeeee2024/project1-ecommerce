@@ -39,7 +39,7 @@ const products = [
     name: "AirPods (3rd generation) ",
     description:
       "All-new design featuring spatial audio with dynamic head tracking.",
-    category: "airpods",
+    category: "Airpods",
     price: 179,
     inStock: 15,
     images: ["/uploads/airpods.jpeg"],

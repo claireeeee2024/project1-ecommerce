@@ -35,9 +35,9 @@ const ProductForm = () => {
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});
-  const [message, setMessage] = useState(null);
 
-  const [deleteProduct, { isLoading: isDeleting, error: deleteError }] = useDeleteProductMutation();
+  const [deleteProduct, { isLoading: isDeleting, error: deleteError }] =
+    useDeleteProductMutation();
 
   const [uploadProductImage, { isLoading: isUploading, error: uploadError }] =
     useUploadProductImageMutation();
@@ -52,6 +52,14 @@ const ProductForm = () => {
 
   const navigate = useNavigate();
 
+  const categoryOptions = [
+    "Macbook",
+    "iPhone",
+    "iPad",
+    "Airpods",
+    "Accessories",
+  ];
+
   useEffect(() => {
     if (product) {
       const { images, ...rest } = product;
@@ -61,25 +69,20 @@ const ProductForm = () => {
         setImagePreview(`${BASE_URL}${images[0]}`);
       }
     }
-  }, [product]);
+  }, [product, navigate]);
 
   // delete product
   const handleDelete = async () => {
-    if (
-      window.confirm(
-        "Are you sure you want to delete this product?"
-      )
-    ) {
+    if (window.confirm("Are you sure you want to delete this product?")) {
       try {
         await deleteProduct(productId).unwrap();
         toast.success("Product deleted successfully!");
-        navigate(-1);
+        navigate("/");
       } catch (error) {
         toast.error(error.data?.message || "Failed to delete product");
       }
     }
   };
-  
 
   const onFileChange = (e) => {
     const file = e.target.files[0];
@@ -131,7 +134,7 @@ const ProductForm = () => {
   };
   const onSubmit = async (e) => {
     e.preventDefault();
-    console.log(imagePreview);
+    // console.log(imagePreview);
     const { name, description, category, price, inStock } = formValues;
     const formErrors = {
       name: validateName(name),
@@ -228,12 +231,26 @@ const ProductForm = () => {
                   <Form.Group controlId="category" className="mb-3">
                     <Form.Label>Category</Form.Label>
                     <Form.Control
+                      as="select"
+                      name="category"
+                      onChange={handleInputChange}
+                      value={formValues.category}
+                      isInvalid={!!errors.category}
+                    >
+                      <option>Choose a category</option>
+                      {categoryOptions.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </Form.Control>
+                    {/* <Form.Control
                       type="text"
                       name="category"
                       value={formValues.category}
                       onChange={handleInputChange}
                       isInvalid={!!errors.category}
-                    />
+                    /> */}
                     <Form.Control.Feedback type="invalid">
                       {errors.category}
                     </Form.Control.Feedback>
@@ -319,11 +336,13 @@ const ProductForm = () => {
                   variant="danger"
                   className="w-100 mt-3"
                   onClick={handleDelete}
-                  disabled={isCreating || isUpdating || isUploading || isDeleting}
+                  disabled={
+                    isCreating || isUpdating || isUploading || isDeleting
+                  }
                 >
                   {isCreating || isUploading || isUpdating || isDeleting
-                  ? "Processing..."
-                  : "Delete Product"}
+                    ? "Processing..."
+                    : "Delete Product"}
                 </Button>
               )}
             </Form>

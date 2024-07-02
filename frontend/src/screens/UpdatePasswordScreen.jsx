@@ -29,7 +29,7 @@ const UpdatePasswordScreen = () => {
     }
     try {
       await updatePassword({ email }).unwrap();
-      navigate("/sent-reset-email");
+      navigate("/sent-reset-email", { state: { fromUpdatePassword: true } });
     } catch (error) {
       toast.error(error.data?.message || "Update password failed");
     }

@@ -61,6 +61,7 @@ const Header = () => {
     e.preventDefault();
     dispatch(setPage(1));
     dispatch(setSearchKeyword(searchInput));
+    navigate("/");
   };
   return (
     <header>
@@ -138,80 +139,6 @@ const Header = () => {
         </div>
       </nav>
     </header>
-    // <header>
-    //   <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-    //     <div className="container">
-    //       <Link className="navbar-brand" to="/">
-    //         Management <small>chuwa</small>
-    //       </Link>
-    //       <Form onSubmit={handleSearch} className="d-flex mx-auto my-lg-0 my-2">
-    //         <Form.Control
-    //           type="text"
-    //           placeholder="Search products"
-    //           className="form-control me-2 flex-grow-1"
-    //           value={searchInput}
-    //           onChange={(e) => setSearchInput(e.target.value)}
-    //         />
-    //         <button type="submit" className="btn btn-outline-light">
-    //           <FaSearch />
-    //         </button>
-    //       </Form>
-    //       {/* <button
-    //         className="navbar-toggler"
-    //         type="button"
-    //         data-bs-toggle="collapse"
-    //         data-bs-target="#navbarNav"
-    //         aria-controls="navbarNav"
-    //         aria-expanded="false"
-    //         aria-label="Toggle navigation"
-    //       >
-    //         <span className="navbar-toggler-icon"></span>
-    //       </button> */}
-    //       <div
-    //         className="collapse navbar-collapse justify-content-end"
-    //         id="navbarNav"
-    //       >
-    //         <ul className="navbar-nav">
-    //           {userInfo ? (
-    //             <li className="nav-item">
-    //               <button
-    //                 className="nav-link active btn btn-link"
-    //                 onClick={logoutHandler}
-    //               >
-    //                 <i className="bi bi-person"></i> Sign Out
-    //               </button>
-    //             </li>
-    //           ) : (
-    //             <li className="nav-item">
-    //               <Link className="nav-link active" to="/login">
-    //                 <i className="bi bi-person"></i> Sign In
-    //               </Link>
-    //             </li>
-    //           )}
-    //           <li className="nav-item">
-    //             <button
-    //               className="nav-link active btn btn-link"
-    //               onClick={handleClick}
-    //             >
-    //               <PiShoppingCart style={{ color: "white" }} />
-    //               <span className="badge">{qtys || 0}</span>
-    //               <span>${total.toFixed(2) || 0}</span>
-    //             </button>
-    //             {cartVisible && <Cart onClose={handleClose} />}
-    //           </li>
-    //         </ul>
-    //       </div>
-    //     </div>
-    //   </nav>
-    //   {logoutMessage && (
-    //     <Message
-    //       type={logoutMessage.type}
-    //       onClose={() => setLogoutMessage(null)}
-    //     >
-    //       {logoutMessage.text}
-    //     </Message>
-    //   )}
-    // </header>
   );
 };
 

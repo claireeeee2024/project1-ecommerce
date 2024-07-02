@@ -52,8 +52,9 @@ export const validatePrice = (price) => {
 };
 
 export const validateInStock = (inStock) => {
-  if (!inStock || inStock < 0) {
-    return "In stock quantity should be greater than 0.";
+  console.log(inStock);
+  if (inStock === ""  || inStock < 0) {
+    return "Valid quantity is required.";
   }
   return null;
 };

@@ -11,7 +11,7 @@ export const getCartItems = asyncHandler(async (req, res) => {
   const cart = await Cart.findOne({
     user: new mongoose.Types.ObjectId(req.params.id),
   });
-  console.log("cart: ", cart);
+  // console.log("cart: ", cart);
   if (!cart) {
     const newCart = new Cart({ user: req.params.id, cartItems: [] });
     await newCart.save();
@@ -32,6 +32,7 @@ export const getCartItems = asyncHandler(async (req, res) => {
             name: product.name,
             price: product.price,
             image: product.images[0],
+            inStock: 0,
             qty: 0,
           };
         } else {
@@ -41,6 +42,7 @@ export const getCartItems = asyncHandler(async (req, res) => {
               name: product.name,
               price: product.price,
               image: product.images[0],
+              inStock: product.inStock,
               qty: product.inStock,
             };
           } else {
@@ -49,6 +51,7 @@ export const getCartItems = asyncHandler(async (req, res) => {
               name: product.name,
               price: product.price,
               image: product.images[0],
+              inStock: product.inStock,
             };
           }
         }
