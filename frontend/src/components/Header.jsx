@@ -68,7 +68,7 @@ const Header = () => {
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
         <div className="container">
           <Link className="navbar-brand" to="/">
-            Management <span className="chuwa">Chuwa</span>
+            Management <span style={{fontSize : '10px'}} className="chuwa">Chuwa</span>
           </Link>
           <button
             className="navbar-toggler"
