@@ -244,13 +244,6 @@ const ProductForm = () => {
                         </option>
                       ))}
                     </Form.Control>
-                    {/* <Form.Control
-                      type="text"
-                      name="category"
-                      value={formValues.category}
-                      onChange={handleInputChange}
-                      isInvalid={!!errors.category}
-                    /> */}
                     <Form.Control.Feedback type="invalid">
                       {errors.category}
                     </Form.Control.Feedback>

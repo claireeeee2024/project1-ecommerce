@@ -9,7 +9,7 @@ export const EmailField = ({ email, setEmail, errors, setErrors }) => {
   };
 
   return (
-    <Form.Group className="mb-3">
+    <Form.Group controlId="email" className="mb-3">
       <Form.Label>Email</Form.Label>
       <Form.Control
         type="email"
@@ -32,7 +32,7 @@ export const PasswordField = ({ password, setPassword, errors, setErrors }) => {
   };
 
   return (
-    <Form.Group className="mb-3">
+    <Form.Group controlId="password" className="mb-3">
       <Form.Label>Password</Form.Label>
       <Form.Control
         type="password"
