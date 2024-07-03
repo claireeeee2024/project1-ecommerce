@@ -70,6 +70,13 @@ const ProductDetailScreen = () => {
   return (
     <Container>
       <h2 className="my-3">Product Detail</h2>
+
+      {isLoading ? (
+        <Loader />
+      ) : error ? (
+        <p>Error: {error.message}</p>
+      ) : (
+        <>
       <Row>
         <Col>
           <Button
@@ -149,6 +156,8 @@ const ProductDetailScreen = () => {
           </div>
         </Col>
       </Row>
+      </>
+      )}
     </Container>
   );
 };
