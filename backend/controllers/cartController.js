@@ -26,10 +26,35 @@ export const getCartItems = asyncHandler(async (req, res) => {
         product._id.equals(new mongoose.Types.ObjectId(item.id))
       );
       if (product) {
-        return {
-          ...item.toObject(),
-          price: product.price,
-        };
+        if (product.inStock <= 0) {
+          return {
+            ...item.toObject(),
+            name: product.name,
+            price: product.price,
+            image: product.images[0],
+            inStock: 0,
+            qty: 0,
+          };
+        } else {
+          if (product.inStock <= item.qty) {
+            return {
+              ...item.toObject(),
+              name: product.name,
+              price: product.price,
+              image: product.images[0],
+              inStock: product.inStock,
+              qty: product.inStock,
+            };
+          } else {
+            return {
+              ...item.toObject(),
+              name: product.name,
+              price: product.price,
+              image: product.images[0],
+              inStock: product.inStock,
+            };
+          }
+        }
       }
       return null;
     })

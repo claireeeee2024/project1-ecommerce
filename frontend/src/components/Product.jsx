@@ -47,6 +47,7 @@ const Product = ({ product }) => {
           image: newItem.images[0],
           price: newItem.price,
           id: newItem._id,
+          inStock: newItem.inStock,
         },
       }).unwrap();
       dispatch(setQtys(qtys + 1));
@@ -58,7 +59,7 @@ const Product = ({ product }) => {
   };
 
   return (
-    <Card className="card-hover my-3 p-3 h-90 rounded" >
+    <Card className="card-hover my-3 p-3 h-90 rounded">
       <Card.Img
         variant="top"
         src={`${BASE_URL}${product.images[0]}`}
@@ -79,7 +80,6 @@ const Product = ({ product }) => {
             <Button
               variant="primary"
               className="flex-grow-1 mx-1"
-              
               onClick={() => handleClick(product)}
             >
               Add
@@ -97,6 +97,7 @@ const Product = ({ product }) => {
                 type="text"
                 value={data.item.qty}
                 onChange={(e) => handleChange(userInfo._id, product, e)}
+                readOnly
               />
               <Button
                 className="mr-2"
@@ -108,7 +109,13 @@ const Product = ({ product }) => {
               </Button>
             </div>
           ) : (
-            <Button variant="secondary" style={{ fontSize: '13px' }} className="flex-grow-1 mx-1">Out of Stock</Button>
+            <Button
+              variant="secondary"
+              style={{ fontSize: "13px" }}
+              className="flex-grow-1 mx-1"
+            >
+              Out of Stock
+            </Button>
           )}
           {userInfo &&
           userInfo.isVendor === true &&
