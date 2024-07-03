@@ -3,17 +3,43 @@ import Product from "../models/product.js";
 import asyncHandler from "../middleware/asyncHandler.js";
 import mongoose from "mongoose";
 
+// @desc    Get cart total quantity and price
+// @route   Get /api/carts/total/:userId
+// @access  Public
+export const getCartTotal = asyncHandler(async (req, res) => {
+  const cart = await Cart.findOne({
+    user: new mongoose.Types.ObjectId(req.params.userId),
+  });
+  console.log("cart", cart);
+  if (!cart) {
+    return res.status(200).json({
+      totalQuantity: 0,
+      totalPrice: 0,
+    });
+  } else {
+    return res.status(200).json({
+      totalQuantity: cart.totalQuantity,
+      totalPrice: cart.totalPrice,
+    });
+  }
+});
+
 // @desc    Get all cart items
-// @route   Get /api/carts/:id
+// @route   Get /api/carts/:userId
 // @access  Public
 export const getCartItems = asyncHandler(async (req, res) => {
-  //   console.log(req.params.id);
+  console.log(req.params.id);
   const cart = await Cart.findOne({
-    user: new mongoose.Types.ObjectId(req.params.id),
+    user: new mongoose.Types.ObjectId(req.params.userId),
   });
   // console.log("cart: ", cart);
   if (!cart) {
-    const newCart = new Cart({ user: req.params.id, cartItems: [] });
+    const newCart = new Cart({
+      user: req.params.userId,
+      cartItems: [],
+      totalPrice: 0,
+      totalQuantity: 0,
+    });
     await newCart.save();
     return res.status(200).json({ cartItems: newCart.cartItems });
   }
@@ -60,6 +86,18 @@ export const getCartItems = asyncHandler(async (req, res) => {
     })
     .filter((item) => item !== null);
   console.log("result", result);
+  cart.cartItems = result;
+  const newTotalPrice = result.reduce(
+    (pre, cur) => pre + cur.qty * cur.price,
+    0
+  );
+  const newTotalQuantity = result.reduce((pre, cur) => pre + cur.qty, 0);
+  console.log("newTotalP: ", newTotalPrice);
+  console.log("newTotalQ: ", newTotalQuantity);
+  cart.totalPrice = newTotalPrice;
+  cart.totalQuantity = newTotalQuantity;
+  await cart.save();
+  console.log("cart: ", cart);
   res.status(200).json({ cartItems: result });
 });
 
@@ -67,14 +105,10 @@ export const getCartItems = asyncHandler(async (req, res) => {
 // @route   Get /api/carts/:userId/:itemId
 // @access  Public
 export const getCartItemById = asyncHandler(async (req, res) => {
-  //   console.log(req.params.id);
   const cart = await Cart.findOne({
     user: new mongoose.Types.ObjectId(req.params.userId),
   });
-  //   console.log(cart);
   if (!cart) {
-    const newCart = new Cart({ user: req.params.id, cartItems: [] });
-    await newCart.save();
     return res.status(200);
   }
   const item = cart.cartItems.find((item) => item.id === req.params.itemId);
@@ -91,11 +125,18 @@ export const createCartItem = asyncHandler(async (req, res) => {
   });
   //   console.log("cart: ", cart);
   if (!cart) {
-    const newCart = new Cart({ user: userId, cartItem: [newItem] });
+    const newCart = new Cart({
+      user: userId,
+      cartItem: [newItem],
+      totalQuantity: 1,
+      totalPrice: newItem.price,
+    });
     await newCart.save();
     return res.status(201).json({ cartItems: cart.cartItems });
   }
   cart.cartItems.push(newItem);
+  cart.totalQuantity += 1;
+  cart.totalPrice += newItem.price;
   await cart.save();
   res.status(201).json({ cartItems: cart.cartItems });
 });
@@ -115,8 +156,12 @@ export const updateCartItem = asyncHandler(async (req, res) => {
   const item = cart.cartItems.find((item) => item.id === itemId);
   if (operation == "ADD") {
     item.qty = item.qty + 1;
+    cart.totalQuantity = cart.totalQuantity + 1;
+    cart.totalPrice = cart.totalPrice + item.price;
   } else if (operation == "MINUS") {
     item.qty = item.qty - 1;
+    cart.totalQuantity = cart.totalQuantity - 1;
+    cart.totalPrice = cart.totalPrice - item.price;
   } else {
     item.qty = parseInt(operation) || 1;
   }
@@ -149,6 +194,11 @@ export const deleteCartItem = asyncHandler(async (req, res) => {
   const updatedCartItems = cart.cartItems.filter((item) => item.id !== itemId);
   //   console.log("update: ", updatedCartItems);
   cart.cartItems = updatedCartItems;
+  cart.totalPrice = cart.cartItems.reduce(
+    (pre, cur) => pre + cur.price * cur.qty,
+    0
+  );
+  cart.totalQuantity = cart.cartItems.reduce((pre, cur) => pre + cur.qty, 0);
   await cart.save();
 
   console.log("successfully delete: " + itemId);

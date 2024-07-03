@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { useMemo } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useState, useEffect, useMemo } from "react";
+import { useSelector } from "react-redux";
 import { FormControl, Button } from "react-bootstrap";
 import { useCartOperation } from "../utils/changeCartItems";
 import { BASE_URL } from "../constants";
 import { useGetCartsQuery } from "../slices/cartApiSlice";
-import { setQtys, setTotal } from "../slices/cartSlice";
 import "./app.css";
 
 const Cart = ({ onClose }) => {
@@ -13,21 +11,18 @@ const Cart = ({ onClose }) => {
   const { data, error, isLoading } = useGetCartsQuery({
     id: userId,
   });
-  // console.log(data);
+  //   console.log(data);
 
   const [input, setInput] = useState("");
-
   const [discount, setDiscount] = useState(() => {
     // 尝试从localStorage中读取存储的discount值
     const savedDiscount = localStorage.getItem("discount");
     return savedDiscount !== null ? JSON.parse(savedDiscount) : 10;
   });
-  const taxRate = 0.1;
-  const dispatch = useDispatch();
 
+  const taxRate = 0.1;
   const { qtys, subtotal, tax, total } = useMemo(() => {
     const qtys = data?.cartItems?.reduce((pre, cur) => pre + cur.qty, 0);
-    dispatch(setQtys(qtys));
     const subtotal = data?.cartItems?.reduce(
       (pre, cur) => pre + cur.price * cur.qty,
       0
@@ -35,18 +30,15 @@ const Cart = ({ onClose }) => {
     const tax = subtotal * taxRate;
     let total = subtotal + tax - discount;
     total = total > 0 ? total : 0;
-    dispatch(setTotal(subtotal));
     return { qtys, subtotal, tax, total };
-  }, [data, discount, dispatch]);
+  }, [data, discount]);
 
-  // 当变化时，将其保存到localStorage
   useEffect(() => {
     localStorage.setItem("discount", JSON.stringify(discount));
   }, [discount]);
 
   const handleApply = () => {
     const coupon = parseInt(input);
-    // console.log(coupon);
     if (isNaN(coupon)) {
       setDiscount(0);
       return;
@@ -103,6 +95,7 @@ const Cart = ({ onClose }) => {
                       src={`${BASE_URL}${item.image}`}
                       alt="..."
                       className="col-4"
+                      style={{ height: "100px", objectFit: "contain" }}
                     />
                     <div className="col-8">
                       <div className="row">
@@ -110,7 +103,7 @@ const Cart = ({ onClose }) => {
                         <p className="col-4">${item.price}</p>
                       </div>
                       <div className="row">
-                        {item.qty > 0 ? (
+                        {item.inStock > 0 ? (
                           <div className="col-8 d-flex justify-content-between align-items-center">
                             <Button
                               onClick={() =>

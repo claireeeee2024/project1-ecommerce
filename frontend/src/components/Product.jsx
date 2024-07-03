@@ -1,21 +1,14 @@
 import React from "react";
 import { Card, Button, Form } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import {
-  useCreateCartItemMutation,
-  useGetItemQuery,
-} from "../slices/cartApiSlice";
+import { useGetItemQuery } from "../slices/cartApiSlice";
 import "./Product.css";
 import { useCartOperation } from "../utils/changeCartItems";
 import { BASE_URL } from "../constants";
-import { useDispatch } from "react-redux";
-import { setQtys, setTotal } from "../slices/cartSlice";
 
 const Product = ({ product }) => {
   const userInfo = useSelector((state) => state.auth.userInfo) || null;
-  const navigate = useNavigate();
-  const [createCartItem] = useCreateCartItemMutation();
   const { data } = useGetItemQuery(
     {
       userId: userInfo?._id,
@@ -23,40 +16,9 @@ const Product = ({ product }) => {
     },
     { skip: !userInfo }
   );
-  // console.log(data);
-  const qtys = useSelector((state) => state.cart.qtys);
-  const total = useSelector((state) => state.cart.total);
-  const dispatch = useDispatch();
 
-  const { handleChange, debouncedHandleAdd, debouncedHandleMinus } =
+  const { debouncedHandleAdd, debouncedHandleMinus, debounceHandleCreate } =
     useCartOperation();
-
-  const handleClick = async (newItem) => {
-    if (!userInfo) {
-      window.alert("Please log in to add items to cart");
-      navigate("/login");
-      return;
-    }
-    try {
-      // console.log(userInfo._id);
-      await createCartItem({
-        userId: userInfo._id,
-        newItem: {
-          name: newItem.name,
-          qty: 1,
-          image: newItem.images[0],
-          price: newItem.price,
-          id: newItem._id,
-          inStock: newItem.inStock,
-        },
-      }).unwrap();
-      dispatch(setQtys(qtys + 1));
-      dispatch(setTotal(total + newItem.price));
-      console.log(`Item with id ${newItem._id} is added`);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   return (
     <Card className="card-hover my-3 p-3 h-90 rounded">
@@ -68,7 +30,9 @@ const Product = ({ product }) => {
       />
       <Card.Body>
         <Link to={`/products/${product._id}`}>
-          <Card.Title className="product-name">{product.name}</Card.Title>
+          <Card.Subtitle className="product-name small-text">
+            {product.name}
+          </Card.Subtitle>
         </Link>
         <Card.Text as="h4" className="product-price">
           ${product.price}
@@ -79,15 +43,18 @@ const Product = ({ product }) => {
           {(product.inStock > 0 && !data?.item?.qty) || !userInfo ? (
             <Button
               variant="primary"
-              style={{ fontSize: "14px" }}
-              className="flex-grow-1 mx-1"
-              onClick={() => handleClick(product)}
+              className="flex-grow-1 mx-1 mb-1"
+              onClick={() => debounceHandleCreate(userInfo, product)}
             >
               Add
             </Button>
           ) : product.inStock > 0 ? (
-            <div style={{ display: "flex", flex: 1 }}>
+            <div
+              style={{ display: "flex", flex: 1 }}
+              className="small-buttons mb-1 "
+            >
               <Button
+                className="flex-shrink-0"
                 onClick={() =>
                   debouncedHandleMinus(userInfo._id, product, data.item.qty)
                 }
@@ -97,8 +64,8 @@ const Product = ({ product }) => {
               <Form.Control
                 type="text"
                 value={data.item.qty}
-                style={{ fontSize: "14px" }}
-                onChange={(e) => handleChange(userInfo._id, product, e)}
+                style={{ fontSize: "0.65rem" }}
+                textalign="center"
                 readOnly
               />
               <Button
@@ -124,8 +91,7 @@ const Product = ({ product }) => {
           userInfo._id.toString() === product.vendor.toString() ? (
             <Link
               to={`/products/edit/${product._id}`}
-              className="btn btn-outline-dark mx-1"
-              style={{ fontSize: "14px" }}
+              className="btn btn-outline-dark mx-1 mb-1 flex-grow"
             >
               Edit product
             </Link>
