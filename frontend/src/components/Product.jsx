@@ -59,35 +59,35 @@ const Product = ({ product }) => {
   };
 
   return (
-    <Card className="card-hover my-3 p-1 h-90 rounded">
+    <Card className="card-hover my-3 p-3 h-90 rounded">
       <Card.Img
         variant="top"
         src={`${BASE_URL}${product.images[0]}`}
-        style={{ width: "100%", height: "210px", objectFit: "contain" }}
+        style={{ width: "100%", height: "200px", objectFit: "contain" }}
         className="product-image"
       />
-      <Card.Body >
+      <Card.Body>
         <Link to={`/products/${product._id}`}>
-          <Card.Subtitle className="product-name small-text">{product.name}</Card.Subtitle>
+          <Card.Title className="product-name">{product.name}</Card.Title>
         </Link>
-        <Card.Text as="h5" className="product-price">
+        <Card.Text as="h4" className="product-price">
           ${product.price}
         </Card.Text>
 
         {/* <Card.Text className="product-category">{product.category}</Card.Text> */}
-        <div className="d-flex justify-content-between small-buttons flex-wrap">
+        <div className="d-flex justify-content-between">
           {(product.inStock > 0 && !data?.item?.qty) || !userInfo ? (
             <Button
               variant="primary"
-              className="flex-grow-1 mx-1 mb-1"
+              style={{ fontSize: "14px" }}
+              className="flex-grow-1 mx-1"
               onClick={() => handleClick(product)}
             >
-              Add to Cart
+              Add
             </Button>
           ) : product.inStock > 0 ? (
-            <div style={{ display: "flex", flex: 1 }} className="small-buttons mb-1 ">
+            <div style={{ display: "flex", flex: 1 }}>
               <Button
-              className="flex-shrink-0"
                 onClick={() =>
                   debouncedHandleMinus(userInfo._id, product, data.item.qty)
                 }
@@ -97,13 +97,12 @@ const Product = ({ product }) => {
               <Form.Control
                 type="text"
                 value={data.item.qty}
-                style={{fontSize: "0.65rem"}}
+                style={{ fontSize: "14px" }}
                 onChange={(e) => handleChange(userInfo._id, product, e)}
-                textAlign="center"
                 readOnly
               />
               <Button
-                className="flex-shrink-0 mr-2"
+                className="mr-1"
                 onClick={() =>
                   debouncedHandleAdd(userInfo._id, product, data.item.qty)
                 }
@@ -114,8 +113,8 @@ const Product = ({ product }) => {
           ) : (
             <Button
               variant="secondary"
-              style={{ fontSize: "13px" }}
-              className="flex-grow-1 mx-1 mb-1"
+              style={{ fontSize: "12px" }}
+              className="flex-grow-1"
             >
               Out of Stock
             </Button>
@@ -125,8 +124,8 @@ const Product = ({ product }) => {
           userInfo._id.toString() === product.vendor.toString() ? (
             <Link
               to={`/products/edit/${product._id}`}
-              className="btn btn-outline-dark mx-1 mb-1 flex-grow" 
-
+              className="btn btn-outline-dark mx-1"
+              style={{ fontSize: "14px" }}
             >
               Edit product
             </Link>

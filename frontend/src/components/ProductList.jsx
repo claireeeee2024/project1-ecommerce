@@ -20,7 +20,7 @@ export const ProductList = () => {
   const searchKeyword =
     useSelector((state) => state.product.searchKeyword) || "";
 
-  const pageSize = 10;
+  const pageSize = 12;
   const { data, isLoading, error } = useGetProductsQuery(
     {
       page: currentPage,
@@ -85,7 +85,7 @@ export const ProductList = () => {
               ) : null}
             </Col>
           </Row>
-          <Row className="d-flex justify-content-between flex-wrap">
+          <Row>
             
             {data?.products.length === 0 ? (
               <h2>No products found</h2>
@@ -98,10 +98,8 @@ export const ProductList = () => {
                   md={6}
                   lg={4}
                   xl={3}
-                  className="mb-2 product-card"
-                  style={{ minWidth: '220px', flexGrow: 1, flexBasis: '220px' }} //remove to restore original layout
+                  className="mb-2"
                 >
-                  
                   <Product product={product} />
                 </Col>
               ))
