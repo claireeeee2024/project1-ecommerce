@@ -1,4 +1,4 @@
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import Loader from "../components/Loader";
 import { useGetProductByIdQuery } from "../slices/productApiSlice";
@@ -7,10 +7,8 @@ import {
   useCreateCartItemMutation,
   useGetItemQuery,
 } from "../slices/cartApiSlice";
-import { Form } from "react-bootstrap";
 import { useCartOperation } from "../utils/changeCartItems";
 import { BASE_URL } from "../constants";
-import { setQtys, setTotal } from "../slices/cartSlice";
 
 const ProductDetailScreen = () => {
   const { id } = useParams();
@@ -32,10 +30,6 @@ const ProductDetailScreen = () => {
   const { handleChange, debouncedHandleAdd, debouncedHandleMinus } =
     useCartOperation();
 
-  const qtys = useSelector((state) => state.cart.qtys);
-  const total = useSelector((state) => state.cart.total);
-  const dispatch = useDispatch();
-
   const handleClick = async (newItem) => {
     if (!userInfo) {
       window.alert("Please log in to add items to cart");
@@ -55,8 +49,6 @@ const ProductDetailScreen = () => {
           inStock: newItem.inStock,
         },
       }).unwrap();
-      dispatch(setQtys(qtys + 1));
-      dispatch(setTotal(total + newItem.price));
       console.log(`Item with id ${newItem._id} is added`);
     } catch (error) {
       console.error(error);

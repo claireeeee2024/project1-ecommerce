@@ -2,17 +2,13 @@ import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useLogoutMutation } from "../slices/usersApiSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../slices/authSlice";
-import Message from "./Message";
-import { Button } from "react-bootstrap";
 import { setSearchKeyword, setPage } from "../slices/productSlice";
 import { Form } from "react-bootstrap";
-import { setCartItems } from "../slices/cartApiSlice";
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { PiShoppingCart } from "react-icons/pi";
-import { FaShoppingCart, FaSearch } from "react-icons/fa";
-import { useGetCartsQuery } from "../slices/cartApiSlice";
-import { useMemo } from "react";
+import { FaSearch } from "react-icons/fa";
+import { useGetTotalQuery } from "../slices/cartApiSlice";
 import Cart from "./Cart";
 import { toast } from "react-toastify";
 import "./Header.css";
@@ -24,8 +20,14 @@ const Header = () => {
     useSelector((state) => state.product.searchKeyword) || ""
   );
 
-  const qtys = useSelector((state) => state.cart.qtys) || 0;
-  const total = useSelector((state) => state.cart.total) || 0;
+  const { data, isLoading, error } = useGetTotalQuery(
+    {
+      userId: userInfo?._id,
+    },
+    { skip: !userInfo }
+  );
+
+  console.log("total data:", data);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -64,81 +66,97 @@ const Header = () => {
     navigate("/");
   };
   return (
-    <header>
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div className="container">
-          <Link className="navbar-brand" to="/">
-            Management <span style={{fontSize : '10px'}} className="chuwa">Chuwa</span>
-          </Link>
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNav"
-            aria-controls="navbarNav"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <Form
-              onSubmit={handleSearch}
-              className="d-flex mx-auto my-lg-0 my-2 flex-grow-1"
-            >
-              <Form.Control
-                type="text"
-                placeholder="Search"
-                className="form-control me-2"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-              />
-              <button type="submit" className="btn btn-outline-light">
-                <FaSearch />
+    <>
+      {isLoading ? (
+        <div>loading...</div>
+      ) : (
+        <header>
+          <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div className="container">
+              <Link className="navbar-brand" to="/">
+                Management{" "}
+                <span style={{ fontSize: "10px" }} className="chuwa">
+                  Chuwa
+                </span>
+              </Link>
+              <button
+                className="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav"
+                aria-controls="navbarNav"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+              >
+                <span className="navbar-toggler-icon"></span>
               </button>
-            </Form>
-            <ul className="navbar-nav ms-auto">
-              {userInfo ? (
-                <li className="nav-item">
-                  <button
-                    className="nav-link active btn btn-link"
-                    onClick={logoutHandler}
-                  >
-                    <i className="bi bi-person"></i> Sign Out
-                  </button>
-                </li>
-              ) : (
-                <li className="nav-item">
-                  <button
-                    className="nav-link active btn btn-link"
-                    onClick={handleLoginClick}
-                  >
-                    <i className="bi bi-person"></i> Sign In
-                  </button>
-                </li>
-              )}
-              <li className="nav-item">
-                <button
-                  className="nav-link active btn btn-link cart-button"
-                  onClick={handleClick}
+              <div className="collapse navbar-collapse" id="navbarNav">
+                <Form
+                  onSubmit={handleSearch}
+                  className="d-flex mx-auto my-lg-0 my-2 flex-grow-1"
                 >
-                  <PiShoppingCart style={{ color: "white" }} />
-                  {userInfo && qtys > 0 && (
-                    <span className="badge badge-custom">{qtys}</span>
-                  )}
+                  <Form.Control
+                    type="text"
+                    placeholder="Search"
+                    className="form-control me-2"
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                  />
+                  <button type="submit" className="btn btn-outline-light">
+                    <FaSearch />
+                  </button>
+                </Form>
+                <ul className="navbar-nav ms-auto">
                   {userInfo ? (
-                    <span>${total > 0 ? total.toFixed(2) : "0.00"}</span>
+                    <li className="nav-item">
+                      <button
+                        className="nav-link active btn btn-link"
+                        onClick={logoutHandler}
+                      >
+                        <i className="bi bi-person"></i> Sign Out
+                      </button>
+                    </li>
                   ) : (
-                    <span> $0.00</span>
+                    <li className="nav-item">
+                      <button
+                        className="nav-link active btn btn-link"
+                        onClick={handleLoginClick}
+                      >
+                        <i className="bi bi-person"></i> Sign In
+                      </button>
+                    </li>
                   )}
-                </button>
-                {cartVisible && <Cart onClose={handleClose} />}
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-    </header>
+                  <li className="nav-item">
+                    <button
+                      className="nav-link active btn btn-link cart-button"
+                      onClick={handleClick}
+                    >
+                      <PiShoppingCart style={{ color: "white" }} />
+                      {userInfo && data.totalQuantity > 0 && (
+                        <span className="badge badge-custom">
+                          {data.totalQuantity}
+                        </span>
+                      )}
+                      {userInfo ? (
+                        <span>
+                          $
+                          {data.totalPrice > 0
+                            ? data.totalPrice.toFixed(2)
+                            : "0.00"}
+                        </span>
+                      ) : (
+                        <span> $0.00</span>
+                      )}
+                    </button>
+                    {cartVisible && <Cart onClose={handleClose} />}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </nav>
+        </header>
+      )}
+    </>
   );
 };
 

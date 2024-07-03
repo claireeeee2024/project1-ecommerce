@@ -5,11 +5,13 @@ import {
   updateCartItem,
   deleteCartItem,
   getCartItemById,
+  getCartTotal,
 } from "../controllers/cartController.js";
 
 const router = express.Router();
 
-router.get("/:id", getCartItems);
+router.get("/total/:userId", getCartTotal);
+router.get("/:userId", getCartItems);
 router.post("/", createCartItem);
 router.put("/", updateCartItem);
 router.delete("/", deleteCartItem);
