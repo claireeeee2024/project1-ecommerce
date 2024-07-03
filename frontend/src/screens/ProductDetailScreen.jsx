@@ -1,19 +1,16 @@
 import { Container, Row, Col, Button } from "react-bootstrap";
-import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import Loader from "../components/Loader";
 import { useGetProductByIdQuery } from "../slices/productApiSlice";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import {
   useCreateCartItemMutation,
   useGetItemQuery,
 } from "../slices/cartApiSlice";
-import { Form, Card } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import { useCartOperation } from "../utils/changeCartItems";
 import { BASE_URL } from "../constants";
 import { setQtys, setTotal } from "../slices/cartSlice";
-import { Link } from "react-router-dom";
 
 const ProductDetailScreen = () => {
   const { id } = useParams();
@@ -55,6 +52,7 @@ const ProductDetailScreen = () => {
           image: newItem.images[0],
           price: newItem.price,
           id: newItem._id,
+          inStock: newItem.inStock,
         },
       }).unwrap();
       dispatch(setQtys(qtys + 1));
@@ -125,9 +123,13 @@ const ProductDetailScreen = () => {
                 </Button>
               </div>
             ) : (
-              <Card.Subtitle className="text-danger">
+              <Button
+                variant="secondary"
+                style={{ fontSize: "13px" }}
+                className="flex-grow-1 mx-1"
+              >
                 Out of Stock
-              </Card.Subtitle>
+              </Button>
             )}
 
             {userInfo &&
@@ -141,21 +143,6 @@ const ProductDetailScreen = () => {
               </Link>
             ) : null}
           </div>
-          {/* <div className="d-flex flex-md-row justify-content-between">
-            <Button
-              variant="primary"
-              className="mb-2 mb-md-0 flex-fill me-md-2"
-            >
-              Add To Cart
-            </Button>
-            <Button
-              variant="secondary"
-              className="flex-fill"
-              href={`/products/edit/${data._id}`}
-            >
-              Edit
-            </Button>
-          </div> */}
         </Col>
       </Row>
     </Container>

@@ -26,7 +26,7 @@ export const getProducts = asyncHandler(async (req, res) => {
 
   let filter = {};
   if (searchQuery && searchQuery !== "") {
-    const regexPattern = searchQuery.split("").join(".*");
+    const regexPattern = searchQuery.split(" ").join(".*");
     filter = {
       $or: [
         { name: { $regex: regexPattern, $options: "i" } },

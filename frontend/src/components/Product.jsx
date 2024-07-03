@@ -47,6 +47,7 @@ const Product = ({ product }) => {
           image: newItem.images[0],
           price: newItem.price,
           id: newItem._id,
+          inStock: newItem.inStock,
         },
       }).unwrap();
       dispatch(setQtys(qtys + 1));
@@ -58,11 +59,11 @@ const Product = ({ product }) => {
   };
 
   return (
-    <Card className="card-hover my-3 p-3 rounded">
+    <Card className="card-hover my-3 p-3 h-90 rounded">
       <Card.Img
         variant="top"
         src={`${BASE_URL}${product.images[0]}`}
-        style={{ width: "100%", height: "200px", objectFit: "contain" }}
+        style={{ width: "100%", height: "250px", objectFit: "contain" }}
         className="product-image"
       />
       <Card.Body>
@@ -73,7 +74,7 @@ const Product = ({ product }) => {
           ${product.price}
         </Card.Text>
 
-        <Card.Text className="product-category">{product.category}</Card.Text>
+        {/* <Card.Text className="product-category">{product.category}</Card.Text> */}
         <div className="d-flex justify-content-between">
           {(product.inStock > 0 && !data?.item?.qty) || !userInfo ? (
             <Button
@@ -96,6 +97,7 @@ const Product = ({ product }) => {
                 type="text"
                 value={data.item.qty}
                 onChange={(e) => handleChange(userInfo._id, product, e)}
+                readOnly
               />
               <Button
                 className="mr-2"
@@ -107,14 +109,20 @@ const Product = ({ product }) => {
               </Button>
             </div>
           ) : (
-            <Card.Subtitle>Out of Stock</Card.Subtitle>
+            <Button
+              variant="secondary"
+              style={{ fontSize: "13px" }}
+              className="flex-grow-1 mx-1"
+            >
+              Out of Stock
+            </Button>
           )}
           {userInfo &&
           userInfo.isVendor === true &&
           userInfo._id.toString() === product.vendor.toString() ? (
             <Link
               to={`/products/edit/${product._id}`}
-              className="btn btn-primary mx-1"
+              className="btn btn-outline-dark mx-1"
             >
               Edit product
             </Link>
