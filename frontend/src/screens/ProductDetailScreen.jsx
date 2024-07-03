@@ -1,19 +1,16 @@
 import { Container, Row, Col, Button } from "react-bootstrap";
-import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import Loader from "../components/Loader";
 import { useGetProductByIdQuery } from "../slices/productApiSlice";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import {
   useCreateCartItemMutation,
   useGetItemQuery,
 } from "../slices/cartApiSlice";
-import { Form, Card } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import { useCartOperation } from "../utils/changeCartItems";
 import { BASE_URL } from "../constants";
 import { setQtys, setTotal } from "../slices/cartSlice";
-import { Link } from "react-router-dom";
 
 const ProductDetailScreen = () => {
   const { id } = useParams();
