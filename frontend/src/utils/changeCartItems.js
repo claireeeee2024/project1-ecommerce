@@ -106,13 +106,13 @@ export const useCartOperation = () => {
   const debouncedHandleAdd = useCallback(
     _.debounce((userId, product, qty) => {
       handleAdd(userId, product, qty);
-    }, 200)
+    }, 500)
   );
 
   const debouncedHandleMinus = useCallback(
     _.debounce((userId, product, qty) => {
       handleMinus(userId, product, qty);
-    }, 200)
+    }, 500)
   );
 
   const handleCheckout = () => {

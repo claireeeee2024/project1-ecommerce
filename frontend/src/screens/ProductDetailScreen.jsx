@@ -12,13 +12,12 @@ import { BASE_URL } from "../constants";
 
 const ProductDetailScreen = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
 
-  console.log(id);
+  //   console.log(id);
   const { data: product, error, isLoading } = useGetProductByIdQuery(id);
 
   const { userInfo } = useSelector((state) => state.auth);
-  const navigate = useNavigate();
-  const [createCartItem] = useCreateCartItemMutation();
   const { data } = useGetItemQuery(
     {
       userId: userInfo?._id,
@@ -27,33 +26,8 @@ const ProductDetailScreen = () => {
     { skip: !userInfo }
   );
 
-  const { handleChange, debouncedHandleAdd, debouncedHandleMinus } =
+  const { debounceHandleCreate, debouncedHandleAdd, debouncedHandleMinus } =
     useCartOperation();
-
-  const handleClick = async (newItem) => {
-    if (!userInfo) {
-      window.alert("Please log in to add items to cart");
-      navigate("/login");
-      return;
-    }
-    try {
-      console.log(userInfo._id);
-      await createCartItem({
-        userId: userInfo._id,
-        newItem: {
-          name: newItem.name,
-          qty: 1,
-          image: newItem.images[0],
-          price: newItem.price,
-          id: newItem._id,
-          inStock: newItem.inStock,
-        },
-      }).unwrap();
-      console.log(`Item with id ${newItem._id} is added`);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   if (!product) {
     return <Loader />;
@@ -92,7 +66,7 @@ const ProductDetailScreen = () => {
                 variant="primary"
                 style={{ fontSize: "13px" }}
                 className="flex-grow-1 mx-1"
-                onClick={() => handleClick(product)}
+                onClick={() => debounceHandleCreate(userInfo, product)}
               >
                 Add to Cart
               </Button>
@@ -109,7 +83,8 @@ const ProductDetailScreen = () => {
                   type="text"
                   className="text-center mx-2"
                   value={data.item.qty}
-                  onChange={(e) => handleChange(userInfo._id, product, e)}
+                  //   onChange={(e) => handleChange(userInfo._id, product, e)}
+                  readOnly
                 />
                 <Button
                   onClick={() =>

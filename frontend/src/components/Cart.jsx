@@ -95,6 +95,7 @@ const Cart = ({ onClose }) => {
                       src={`${BASE_URL}${item.image}`}
                       alt="..."
                       className="col-4"
+                      style={{ height: "100px", objectFit: "contain" }}
                     />
                     <div className="col-8">
                       <div className="row">
@@ -102,7 +103,7 @@ const Cart = ({ onClose }) => {
                         <p className="col-4">${item.price}</p>
                       </div>
                       <div className="row">
-                        {item.qty > 0 ? (
+                        {item.inStock > 0 ? (
                           <div className="col-8 d-flex justify-content-between align-items-center">
                             <Button
                               onClick={() =>
