@@ -20,7 +20,7 @@ export const ProductList = () => {
   const searchKeyword =
     useSelector((state) => state.product.searchKeyword) || "";
 
-  const pageSize = 12;
+  const pageSize = 8;
   const { data, isLoading, error } = useGetProductsQuery(
     {
       page: currentPage,

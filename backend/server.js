@@ -8,7 +8,7 @@ import cookieParser from "cookie-parser";
 import userRoutes from "./routes/userRoutes.js";
 import productRouter from "./routes/productRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
-// import timeout from "connect-timeout";
+import timeout from "connect-timeout";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 
 dotenv.config();
@@ -18,7 +18,7 @@ connectDB();
 
 const app = express();
 
-// app.use(timeout("2s")); 
+app.use(timeout("2s")); 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

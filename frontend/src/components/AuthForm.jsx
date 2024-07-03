@@ -82,7 +82,7 @@ const AuthForm = ({
                     <Form.Check
                       type="switch"
                       label="Register as a vendor"
-                      value={isVendor}
+                      checked={isVendor}
                       onChange={(e) => setIsVendor(!isVendor)}
                       className="mb-3"
                     />
