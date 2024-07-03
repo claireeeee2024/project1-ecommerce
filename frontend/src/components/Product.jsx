@@ -63,7 +63,7 @@ const Product = ({ product }) => {
       <Card.Img
         variant="top"
         src={`${BASE_URL}${product.images[0]}`}
-        style={{ width: "100%", height: "250px", objectFit: "contain" }}
+        style={{ width: "100%", height: "200px", objectFit: "contain" }}
         className="product-image"
       />
       <Card.Body>
@@ -79,6 +79,7 @@ const Product = ({ product }) => {
           {(product.inStock > 0 && !data?.item?.qty) || !userInfo ? (
             <Button
               variant="primary"
+              style={{ fontSize: "14px" }}
               className="flex-grow-1 mx-1"
               onClick={() => handleClick(product)}
             >
@@ -96,11 +97,12 @@ const Product = ({ product }) => {
               <Form.Control
                 type="text"
                 value={data.item.qty}
+                style={{ fontSize: "14px" }}
                 onChange={(e) => handleChange(userInfo._id, product, e)}
                 readOnly
               />
               <Button
-                className="mr-2"
+                className="mr-1"
                 onClick={() =>
                   debouncedHandleAdd(userInfo._id, product, data.item.qty)
                 }
@@ -111,8 +113,8 @@ const Product = ({ product }) => {
           ) : (
             <Button
               variant="secondary"
-              style={{ fontSize: "13px" }}
-              className="flex-grow-1 mx-1"
+              style={{ fontSize: "12px" }}
+              className="flex-grow-1"
             >
               Out of Stock
             </Button>
@@ -123,6 +125,7 @@ const Product = ({ product }) => {
             <Link
               to={`/products/edit/${product._id}`}
               className="btn btn-outline-dark mx-1"
+              style={{ fontSize: "14px" }}
             >
               Edit product
             </Link>

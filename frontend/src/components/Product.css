@@ -18,3 +18,8 @@
     width: 100%; /* Make the image fill the available width */
     object-fit: contain; /* Maintain the aspect ratio and fit within the container */
   }
+
+
+  /* .product-card .btn {
+    font-size: 0.65rem;
+  } */

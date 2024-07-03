@@ -70,6 +70,13 @@ const ProductDetailScreen = () => {
   return (
     <Container>
       <h2 className="my-3">Product Detail</h2>
+
+      {isLoading ? (
+        <Loader />
+      ) : error ? (
+        <p>Error: {error.message}</p>
+      ) : (
+        <>
       <Row>
         <Col>
           <Button
@@ -96,7 +103,11 @@ const ProductDetailScreen = () => {
           <p>{product.description}</p>
           <div className="d-flex">
             {product.inStock > 0 && !data?.item?.qty ? (
-              <Button variant="primary" onClick={() => handleClick(product)}>
+              <Button
+                variant="primary"
+                className="flex-grow-1 mx-1"
+                onClick={() => handleClick(product)}
+              >
                 Add to Cart
               </Button>
             ) : product.inStock > 0 ? (
@@ -145,6 +156,8 @@ const ProductDetailScreen = () => {
           </div>
         </Col>
       </Row>
+      </>
+      )}
     </Container>
   );
 };
