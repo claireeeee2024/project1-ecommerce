@@ -153,7 +153,7 @@ const ProductForm = () => {
     try {
       let productData;
 
-      console.log(image);
+      // console.log("image", image);
       if (typeof image === "string") {
         productData = {
           ...formValues,
@@ -170,6 +170,7 @@ const ProductForm = () => {
           vendor: userInfo._id,
           images: [uploadResponse.image],
         };
+        // console.log("createProduct", productData);
       }
 
       if (productId) {

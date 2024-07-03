@@ -17,6 +17,7 @@ const storage = multer.diskStorage({
 });
 
 function fileFilter(req, file, cb) {
+  console.log("File received:", file.originalname);
   const filetypes = /jpe?g|png|webp/;
   const mimetypes = /image\/jpe?g|image\/png|image\/webp/;
 
@@ -34,11 +35,13 @@ const upload = multer({ storage, fileFilter });
 const uploadSingleImage = upload.single("image");
 
 router.post("/", (req, res) => {
+  console.log("start uploading")
   uploadSingleImage(req, res, function (err) {
     if (err) {
+      console.error("Upload error:", err.message);
       return res.status(400).send({ message: err.message });
     }
-
+    console.log("File uploaded:", req.file.path);
     res.status(200).send({
       message: "Image uploaded successfully",
       image: `/${req.file.path}`,

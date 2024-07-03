@@ -15,7 +15,7 @@ import { setQtys, setTotal } from "../slices/cartSlice";
 const ProductDetailScreen = () => {
   const { id } = useParams();
 
-  console.log(id);
+  // console.log(id);
   const { data: product, error, isLoading } = useGetProductByIdQuery(id);
 
   const { userInfo } = useSelector((state) => state.auth);
@@ -43,7 +43,7 @@ const ProductDetailScreen = () => {
       return;
     }
     try {
-      console.log(userInfo._id);
+      // console.log(userInfo._id);
       await createCartItem({
         userId: userInfo._id,
         newItem: {
@@ -57,7 +57,7 @@ const ProductDetailScreen = () => {
       }).unwrap();
       dispatch(setQtys(qtys + 1));
       dispatch(setTotal(total + newItem.price));
-      console.log(`Item with id ${newItem._id} is added`);
+      // console.log(`Item with id ${newItem._id} is added`);
     } catch (error) {
       console.error(error);
     }

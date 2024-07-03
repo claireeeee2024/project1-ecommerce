@@ -6,7 +6,7 @@ const products = [
     category: "iPad",
     price: 999,
     inStock: 10,
-    images: ["/uploads/ipad-pro.jpeg"],
+    images: ["/uploads/ipad-pro.jpg"],
   },
   {
     name: "iPad mini",
@@ -36,13 +36,40 @@ const products = [
     images: ["/uploads/iphone-14.jpg"],
   },
   {
-    name: "AirPods (3rd generation) ",
+    name: "AirPods (3rd generation)",
     description:
       "All-new design featuring spatial audio with dynamic head tracking.",
     category: "Airpods",
     price: 179,
     inStock: 15,
-    images: ["/uploads/airpods.jpeg"],
+    images: ["/uploads/airpods-3.jpeg"],
+  },
+  {
+    name: "Macbook Air M1",
+    description:
+      "The 13-inch MacBook Air with the Apple M1 chip is incredibly thin and light with a silent fanless design. ",
+    category: "Macbook",
+    price: 799,
+    inStock: 10,
+    images: ["/uploads/macbook-air-m1.jpeg"],
+  },
+  {
+    name: "Macbook Air M2",
+    description:
+      "M2 begins the next chapter for Apple silicon, which has transformed the Mac lineup with its blazing performance and power efficiency.",
+    category: "Macbook",
+    price: 999,
+    inStock: 50,
+    images: ["/uploads/macbook-air-m2.webp"],
+  },
+  {
+    name: "iPhone 13",
+    description:
+      "The most advanced dual-camera system ever on iPhone. Lightning-fast A15 Bionic chip. ",
+    category: "iPhone",
+    price: 599,
+    inStock: 1,
+    images: ["/uploads/iphone-13.jpg"],
   },
 ];
 

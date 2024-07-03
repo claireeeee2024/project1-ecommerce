@@ -13,7 +13,7 @@ const Cart = ({ onClose }) => {
   const { data, error, isLoading } = useGetCartsQuery({
     id: userId,
   });
-  console.log(data);
+  // console.log(data);
 
   const [input, setInput] = useState("");
 

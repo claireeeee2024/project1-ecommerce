@@ -38,7 +38,7 @@ const Product = ({ product }) => {
       return;
     }
     try {
-      console.log(userInfo._id);
+      // console.log(userInfo._id);
       await createCartItem({
         userId: userInfo._id,
         newItem: {
